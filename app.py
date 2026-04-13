@@ -160,15 +160,42 @@ def study_answer():
 
 @app.route('/api/study/advance', methods=['POST'])
 def study_advance():
-    """Move current_position forward after completing a batch."""
+    """Move current_position forward and save batch record."""
     data = request.get_json()
     count = int(data.get('count', 20))
+    correct = int(data.get('correct', 0))
+    wrong = int(data.get('wrong', 0))
     progress = load_progress()
     questions = load_questions()
-    progress['current_position'] = min(
-        progress['current_position'] + count,
-        len(questions)
-    )
+
+    start_pos = progress['current_position']
+    end_pos = min(start_pos + count, len(questions))
+
+    # Save batch to history
+    progress.setdefault('batches', []).append({
+        'session': len(progress.get('batches', [])) + 1,
+        'start_pos': start_pos,          # 0-based index
+        'end_pos': end_pos,
+        'start_q': questions[start_pos]['id'] if start_pos < len(questions) else None,
+        'end_q': questions[end_pos - 1]['id'] if end_pos > 0 and end_pos <= len(questions) else None,
+        'correct': correct,
+        'wrong': wrong,
+        'date': str(date.today()),
+    })
+
+    progress['current_position'] = end_pos
+    save_progress(progress)
+    return jsonify({'new_position': end_pos, 'total': len(questions)})
+
+
+@app.route('/api/study/jump', methods=['POST'])
+def study_jump():
+    """Jump to a specific position (0-based index)."""
+    data = request.get_json()
+    pos = int(data.get('position', 0))
+    progress = load_progress()
+    questions = load_questions()
+    progress['current_position'] = max(0, min(pos, len(questions)))
     save_progress(progress)
     return jsonify({'new_position': progress['current_position'], 'total': len(questions)})
 
@@ -210,6 +237,7 @@ def get_progress():
         'today_correct': today_session.get('correct', 0),
         'wrong_count': len(wrong_ids),
         'history': history,
+        'batches': list(reversed(progress.get('batches', []))),  # newest first
     })
 
 

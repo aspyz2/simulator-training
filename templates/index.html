@@ -152,6 +152,38 @@
     .loading { color: #3b82f6; }
     .success { color: #10b981; }
     .fail { color: #ef4444; }
+
+    /* Batch history */
+    .batch-section {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+    }
+    .batch-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #4b5563; margin-bottom: 12px; }
+    .batch-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; border-radius: 9px; background: #1f2937;
+      margin-bottom: 6px; gap: 8px;
+    }
+    .batch-row:last-child { margin-bottom: 0; }
+    .batch-num { font-size: 11px; font-weight: 700; color: #6b7280; min-width: 24px; }
+    .batch-range { font-size: 13px; font-weight: 600; color: #d1d5db; flex: 1; }
+    .batch-date { font-size: 11px; color: #4b5563; }
+    .batch-score { font-size: 12px; font-weight: 700; min-width: 34px; text-align: right; }
+    .batch-score.great { color: #10b981; }
+    .batch-score.ok    { color: #f59e0b; }
+    .batch-score.bad   { color: #ef4444; }
+    .batch-jump {
+      font-size: 11px; font-weight: 600; padding: 4px 10px;
+      border: 1px solid #374151; border-radius: 6px;
+      background: transparent; color: #6b7280; cursor: pointer;
+      transition: all 0.12s; white-space: nowrap;
+    }
+    .batch-jump:hover { background: #263040; color: #d1d5db; border-color: #4b5563; }
+    .batch-current { border: 1px solid #1e3a5f; }
+    .batch-current .batch-range { color: #60a5fa; }
   </style>
 </head>
 <body>
@@ -188,6 +220,12 @@
       Progress: {{ current_position }} / {{ total }} questions studied
       {% if current_position >= total %} — <span style="color:#10b981">All done! Reset to restart.</span>{% endif %}
     </div>
+  </div>
+
+  <!-- Session History -->
+  <div class="batch-section" id="batch-section" style="display:none">
+    <div class="batch-title">Session History</div>
+    <div id="batch-list"></div>
   </div>
 
   <!-- Mode cards -->
@@ -301,6 +339,55 @@ async function parsePDF() {
   const data = await res.json();
   if (data.ok) { status.className = 'success'; status.textContent = `Done! ${data.count} questions loaded. Refresh.`; }
   else { status.className = 'fail'; status.textContent = 'Error: ' + data.error; }
+}
+
+// Load session history
+(async () => {
+  const res = await fetch('/api/progress');
+  const data = await res.json();
+  const batches = data.batches || [];
+  if (!batches.length) return;
+
+  document.getElementById('batch-section').style.display = '';
+  const list = document.getElementById('batch-list');
+
+  batches.forEach(b => {
+    const total = b.correct + b.wrong;
+    const pct = total ? Math.round(b.correct / total * 100) : 0;
+    const cls = pct >= 80 ? 'great' : pct >= 60 ? 'ok' : 'bad';
+    const isNext = b.end_pos === data.current_position;
+
+    const row = document.createElement('div');
+    row.className = 'batch-row' + (isNext ? ' batch-current' : '');
+    row.innerHTML = `
+      <span class="batch-num">#${b.session}</span>
+      <span class="batch-range">Q${b.start_q} – Q${b.end_q}</span>
+      <span class="batch-date">${b.date}</span>
+      <span class="batch-score ${cls}">${total ? pct + '%' : '—'}</span>
+      <button class="batch-jump" onclick="jumpToBatch(${b.start_pos}, ${b.end_pos - b.start_pos})">
+        ${isNext ? 'Continue →' : 'Redo'}
+      </button>`;
+    list.appendChild(row);
+  });
+
+  // Also show "upcoming next batch" if not already shown
+  const nextPos = data.current_position;
+  if (nextPos < data.total && !batches.find(b => b.start_pos === nextPos)) {
+    // already shown via the "Start from Q..." button
+  }
+})();
+
+async function jumpToBatch(position, count) {
+  await fetch('/api/study/jump', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ position })
+  });
+  const countEl = document.getElementById('studyCount');
+  if (countEl) countEl.value = count;
+  sessionStorage.setItem('studyMode', 'sequential');
+  sessionStorage.setItem('studyCount', count);
+  window.location.href = '/study';
 }
 
 // Auto-open study settings on load
