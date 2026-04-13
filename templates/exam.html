@@ -381,17 +381,51 @@ function closeLightbox() {
 
 let questions = [];
 let current = 0;
-let userAnswers = {};  // { qid: [letters] }
+let userAnswers = {};
 let marked = new Set();
 let timerInterval;
 let secondsLeft = 90 * 60;
 
+// Auto-save exam state every 15 seconds and on every answer change
+let autoSaveTimer = null;
+function scheduleAutoSave() {
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(persistExam, 15000);
+}
+async function persistExam() {
+  await fetch('/api/exam/state/save', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ answers: userAnswers, current, marked: [...marked] })
+  });
+}
+
 async function init() {
+  // Try to resume a saved exam first
+  const stateRes = await fetch('/api/exam/state');
+  const stateData = await stateRes.json();
+
   const res = await fetch('/api/questions');
   questions = await res.json();
   if (!questions.length) { document.getElementById('q-loading').textContent = 'No questions found.'; return; }
+
+  // Restore saved answers + position if resuming
+  if (stateData.active && stateData.state.answers) {
+    userAnswers = stateData.state.answers;
+    current     = stateData.state.current || 0;
+    marked      = new Set(stateData.state.marked || []);
+    // Restore remaining time from saved state
+    if (stateData.state.seconds_left) secondsLeft = stateData.state.seconds_left;
+    // Show resume banner
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:56px;left:50%;transform:translateX(-50%);background:#1e3a5f;border:1px solid #3b82f6;color:#93c5fd;font-size:13px;font-weight:600;padding:8px 18px;border-radius:20px;z-index:150;transition:opacity 0.5s';
+    banner.textContent = '↩ Resuming your exam';
+    document.body.appendChild(banner);
+    setTimeout(() => { banner.style.opacity='0'; setTimeout(()=>banner.remove(),500); }, 2500);
+  }
+
   buildGrid();
-  showQuestion(0);
+  showQuestion(current);
   startTimer();
   document.getElementById('q-loading').classList.add('hidden');
   document.getElementById('q-content').classList.remove('hidden');
@@ -476,6 +510,7 @@ function selectOption(letter, q) {
     userAnswers[qid] = [letter];
   }
   showQuestion(current);
+  scheduleAutoSave();
 }
 
 function navigate(dir) {
@@ -561,6 +596,13 @@ function startTimer() {
     if (secondsLeft <= 60) el.classList.add('danger');
     if (secondsLeft <= 0) { clearInterval(timerInterval); submitExam(); }
     secondsLeft--;
+    // Save remaining time every 30 seconds
+    if (secondsLeft % 30 === 0) {
+      fetch('/api/exam/state/save', {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ answers: userAnswers, current, marked: [...marked], seconds_left: secondsLeft })
+      });
+    }
   }
   update();
   timerInterval = setInterval(update, 1000);

@@ -195,6 +195,20 @@
 
   {% if error %}<div class="error-msg">{{ error }}</div>{% endif %}
 
+  {% if has_active_study %}
+  <div style="background:#1e3a5f;border:1px solid #3b82f6;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:13px;color:#93c5fd;font-weight:600">↩ You have an unfinished study session</span>
+    <button onclick="resumeStudy()" style="background:#2563eb;border:none;color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer">Resume</button>
+  </div>
+  {% endif %}
+
+  {% if has_active_exam %}
+  <div style="background:#3b1f00;border:1px solid #d97706;border-radius:10px;padding:12px 16px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between">
+    <span style="font-size:13px;color:#fcd34d;font-weight:600">↩ You have an unfinished exam</span>
+    <button onclick="window.location.href='/exam'" style="background:#d97706;border:none;color:#fff;font-size:12px;font-weight:700;padding:6px 14px;border-radius:6px;cursor:pointer">Resume</button>
+  </div>
+  {% endif %}
+
   <!-- Stats -->
   <div class="stats-row">
     <div class="stat">
@@ -301,6 +315,16 @@ function toggleSettings(mode) {
 async function startStudy(e, mode) {
   e.stopPropagation();
   const count = document.getElementById('studyCount').value;
+  // If there's an existing active session, confirm before overwriting
+  const existing = await fetch('/api/study/session').then(r=>r.json());
+  if (existing.active) {
+    if (!confirm('You have an unfinished session. Start a new one and discard it?')) return;
+    // Clear it by calling jump (which clears active_study.json)
+    await fetch('/api/study/jump', {
+      method: 'POST', headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ position: existing.state.start_position })
+    });
+  }
   sessionStorage.setItem('studyMode', mode);
   sessionStorage.setItem('studyCount', count);
   window.location.href = '/study';
@@ -387,6 +411,11 @@ async function jumpToBatch(position, count) {
   if (countEl) countEl.value = count;
   sessionStorage.setItem('studyMode', 'sequential');
   sessionStorage.setItem('studyCount', count);
+  window.location.href = '/study';
+}
+
+function resumeStudy() {
+  // Go directly to /study — it will detect the active session and resume
   window.location.href = '/study';
 }
 

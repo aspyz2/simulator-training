@@ -396,6 +396,36 @@ let results = [];
 async function init() {
   mode = sessionStorage.getItem('studyMode') || 'sequential';
   const count = sessionStorage.getItem('studyCount') || 20;
+
+  // Check if there's an active session to resume
+  const sessionRes = await fetch('/api/study/session');
+  const sessionData = await sessionRes.json();
+
+  if (sessionData.active) {
+    const s = sessionData.state;
+    // Restore state
+    questions      = s.questions;
+    results        = s.results.map(r => r === null ? null : r);  // keep null as null
+    current        = s.current;
+    sessionCorrect = s.correct;
+    sessionWrong   = s.wrong;
+    mode           = s.mode;
+    startPosition  = s.start_position;
+
+    buildGrid();
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('question-wrap').classList.remove('hidden');
+
+    // Find first unanswered to resume at
+    const firstUnanswered = results.findIndex(r => r === null);
+    showQuestion(firstUnanswered === -1 ? current : firstUnanswered);
+
+    // Show resume banner briefly
+    showResumeBanner();
+    return;
+  }
+
+  // No active session — start fresh
   const res = await fetch(`/api/study/questions?mode=${mode}&count=${count}`);
   const data = await res.json();
   questions = data.questions;
@@ -412,6 +442,26 @@ async function init() {
   document.getElementById('loading').classList.add('hidden');
   document.getElementById('question-wrap').classList.remove('hidden');
   showQuestion(0);
+}
+
+function showResumeBanner() {
+  const banner = document.createElement('div');
+  banner.style.cssText = 'position:fixed;top:56px;left:50%;transform:translateX(-50%);background:#1e3a5f;border:1px solid #3b82f6;color:#93c5fd;font-size:13px;font-weight:600;padding:8px 18px;border-radius:20px;z-index:150;transition:opacity 0.5s';
+  banner.textContent = '↩ Resuming where you left off';
+  document.body.appendChild(banner);
+  setTimeout(() => { banner.style.opacity = '0'; setTimeout(() => banner.remove(), 500); }, 2500);
+}
+
+async function persistSession() {
+  await fetch('/api/study/session/save', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      mode, questions, current, results,
+      correct: sessionCorrect, wrong: sessionWrong,
+      start_position: startPosition,
+    })
+  });
 }
 
 function updateRangeTag() {
@@ -528,7 +578,7 @@ async function checkAnswer() {
   const res = await fetch('/api/study/answer', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ id: q.id, answers: selectedAnswers, mode })
+    body: JSON.stringify({ id: q.id, answers: selectedAnswers, mode, index: current })
   });
   const data = await res.json();
 
@@ -546,6 +596,7 @@ async function checkAnswer() {
 
   updateGrid();
   updateSidebar();
+  persistSession();   // save to disk
   showPopup(data);
 }
 
@@ -554,6 +605,12 @@ function skipQuestion() {
   results[current] = 'skip';
   updateGrid();
   updateSidebar();
+  fetch('/api/study/skip', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ index: current })
+  });
+  persistSession();
   const next = findNext();
   if (next === -1) showSummary();
   else showQuestion(next);
