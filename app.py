@@ -1,6 +1,8 @@
 import json
 import os
+import re
 import random
+import threading
 from datetime import date
 from flask import Flask, render_template, jsonify, request, session
 
@@ -164,12 +166,18 @@ def study_questions():
     questions = load_questions()
     progress  = load_progress()
 
-    if mode == 'review':
+    if mode == 'labs':
+        batch = [q for q in questions if q.get('type') == 'lab']
+        # respect position for labs too
+        lab_pos = progress.get('lab_position', 0)
+        batch = batch[lab_pos:lab_pos + count]
+    elif mode == 'review':
         wrong_ids = {int(k) for k, v in progress['question_stats'].items() if v['wrong'] > v['correct']}
-        batch = [q for q in questions if q['id'] in wrong_ids][:count]
+        batch = [q for q in questions if q['id'] in wrong_ids and q.get('type') != 'lab'][:count]
     else:
+        non_labs = [q for q in questions if q.get('type') != 'lab']
         pos   = progress['current_position']
-        batch = questions[pos:pos + count]
+        batch = non_labs[pos:pos + count]
 
     result = [{
         'id': q['id'],
@@ -178,6 +186,8 @@ def study_questions():
         'multiple': q['multiple'],
         'image': q.get('image'),
         'has_exhibit': q.get('has_exhibit', False),
+        'type': q.get('type', 'mcq'),
+        'explanation': q.get('explanation', ''),
     } for q in batch]
 
     # Create a fresh active session on disk
@@ -256,6 +266,64 @@ def study_answer():
     })
 
 
+@app.route('/api/study/lab-result', methods=['POST'])
+def lab_result():
+    """Record self-assessed lab result (correct/wrong)."""
+    data       = request.get_json()
+    q_id       = str(data['id'])
+    is_correct = bool(data.get('correct', False))
+    idx        = data.get('index')
+
+    progress = load_progress()
+    stats = progress['question_stats'].setdefault(q_id, {'correct': 0, 'wrong': 0})
+    if is_correct:
+        stats['correct'] += 1
+    else:
+        stats['wrong'] += 1
+
+    today = str(date.today())
+    day_s = progress['daily_sessions'].setdefault(today, {
+        'questions_done': 0, 'correct': 0, 'wrong': 0, 'q_ids': []
+    })
+    if q_id not in [str(x) for x in day_s.get('q_ids', [])]:
+        day_s['questions_done'] += 1
+        progress['total_studied'] += 1
+        day_s['q_ids'].append(int(q_id))
+    if is_correct:
+        day_s['correct'] += 1
+    else:
+        day_s['wrong'] += 1
+    save_progress(progress)
+
+    if idx is not None:
+        active = load_active_study()
+        if active:
+            active['results'][idx] = is_correct
+            if is_correct:
+                active['correct'] += 1
+            else:
+                active['wrong'] += 1
+            active['current'] = idx
+            save_active_study(active)
+
+    return jsonify({'ok': True})
+
+
+@app.route('/api/study/labs/advance', methods=['POST'])
+def labs_advance():
+    """Advance the lab position after completing a batch."""
+    data  = request.get_json()
+    count = data.get('count', 0)
+    progress = load_progress()
+    all_labs = [q for q in load_questions() if q.get('type') == 'lab']
+    progress['lab_position'] = min(
+        progress.get('lab_position', 0) + count,
+        len(all_labs)
+    )
+    save_progress(progress)
+    return jsonify({'ok': True, 'lab_position': progress['lab_position']})
+
+
 @app.route('/api/study/skip', methods=['POST'])
 def study_skip():
     """Mark a question as skipped in the active session."""
@@ -331,9 +399,13 @@ def get_progress():
         s = progress['daily_sessions'][day]
         history.append({'date': day, 'done': s.get('questions_done', 0),
                         'correct': s.get('correct', 0), 'wrong': s.get('wrong', 0)})
+    all_labs  = [q for q in questions if q.get('type') == 'lab']
+    non_labs  = [q for q in questions if q.get('type') != 'lab']
     return jsonify({
         'current_position': progress['current_position'],
-        'total':            len(questions),
+        'total':            len(non_labs),
+        'total_labs':       len(all_labs),
+        'lab_position':     progress.get('lab_position', 0),
         'total_studied':    progress['total_studied'],
         'today_done':       today_s.get('questions_done', 0),
         'today_correct':    today_s.get('correct', 0),
@@ -450,21 +522,182 @@ def submit():
 
 # ── PDF PARSE ─────────────────────────────────────────────────────────────────
 
+@app.route('/api/open-packet-tracer', methods=['POST'])
+def open_packet_tracer():
+    import subprocess, shutil
+    pt_path = '/Applications/Cisco Packet Tracer 9.0.0/Cisco Packet Tracer 9.0.app'
+    try:
+        if os.path.exists(pt_path):
+            subprocess.Popen(['open', pt_path])
+        else:
+            subprocess.Popen(['open', '-a', 'Cisco Packet Tracer'])
+        return jsonify({'ok': True})
+    except Exception as e:
+        return jsonify({'ok': False, 'error': str(e)})
+
+
+@app.route('/api/list-pdfs')
+def list_pdfs():
+    search_dirs = [
+        os.path.expanduser('~/Downloads'),
+        os.path.expanduser('~/Desktop'),
+        os.path.expanduser('~/Documents'),
+    ]
+    found = []
+    for d in search_dirs:
+        if not os.path.isdir(d):
+            continue
+        for name in sorted(os.listdir(d)):
+            if name.lower().endswith('.pdf'):
+                found.append({'name': name, 'path': os.path.join(d, name)})
+    return jsonify(found)
+
+
+# ── LAB VERIFICATION ──────────────────────────────────────────────────────────
+
+_DEVICE_RE = re.compile(
+    r'(?:On\s+)?(R\d+|SW-?\d+|Sw\w{0,3}\d*|Router\d*|Switch\w{0,6}\d*|DSW\d+|ASW\d+|HQ|Branch|Core)\s*:',
+    re.IGNORECASE
+)
+_CLI_STARTS = re.compile(
+    r'^(interface\b|int\s|ip\s|ipv6\s|no\s|switchport\b|vlan\s|router\s|spanning|channel-group|port-channel|shutdown|conf\b|configure\b|hostname\s|banner\s|line\s|username\s|crypto\s|aaa\s|snmp\s|logging\s|ntp\s|network\s|passive|area\s|neighbor\s|redistribute|eigrp\b|ospf\b|access-list\s|ip\s+route|ipv6\s+route|duplex|speed|description)',
+    re.IGNORECASE
+)
+_SKIP_CMDS = re.compile(r'^(conf(igure)?(\s+t(erminal)?)?$|end$|exit$|enable$)', re.IGNORECASE)
+
+
+def _tokenize_commands(flat_text):
+    words, cmds, buf = flat_text.split(), [], []
+    for w in words:
+        if buf and _CLI_STARTS.match(w):
+            line = ' '.join(buf).strip()
+            if line and not _SKIP_CMDS.match(line):
+                cmds.append(line)
+            buf = [w]
+        else:
+            buf.append(w)
+    if buf:
+        line = ' '.join(buf).strip()
+        if line and not _SKIP_CMDS.match(line):
+            cmds.append(line)
+    return cmds
+
+
+def extract_lab_devices(explanation):
+    if not explanation:
+        return {}
+    parts = _DEVICE_RE.split(explanation)
+    devices = {}
+    i = 1
+    while i < len(parts) - 1:
+        dev   = parts[i].strip().rstrip(':')
+        block = parts[i + 1]
+        block = re.split(r'(?:Task|Step)\s+\d+', block)[0]
+        cmds  = _tokenize_commands(block)
+        cmds  = [c for c in cmds if c.split() and _CLI_STARTS.match(c.split()[0])]
+        key   = dev.upper()
+        if key not in devices:
+            devices[key] = {'name': dev, 'commands': []}
+        for c in cmds:
+            if c not in devices[key]['commands']:
+                devices[key]['commands'].append(c)
+        i += 2
+    return devices
+
+
+def _normalize(cmd):
+    return re.sub(r'\s+', ' ', cmd.lower().strip())
+
+
+def _cmd_in_showrun(cmd, showrun_lines):
+    norm = _normalize(cmd)
+    if len(norm) < 8:
+        return None
+    for line in showrun_lines:
+        if norm in line:
+            return True
+    words = norm.split()
+    if len(words) >= 2:
+        for line in showrun_lines:
+            if all(w in line for w in words):
+                return True
+    return False
+
+
+@app.route('/api/lab/<int:lab_id>/devices')
+def lab_devices(lab_id):
+    q_map = {q['id']: q for q in load_questions()}
+    q = q_map.get(lab_id)
+    if not q or q.get('type') != 'lab':
+        return jsonify({'error': 'Lab not found'}), 404
+    devices = extract_lab_devices(q.get('explanation', ''))
+    return jsonify({'devices': [{'name': v['name'], 'commands': v['commands']} for v in devices.values()]})
+
+
+@app.route('/api/lab/verify', methods=['POST'])
+def lab_verify():
+    data    = request.get_json()
+    lab_id  = data.get('lab_id')
+    configs = data.get('configs', {})
+    q_map   = {q['id']: q for q in load_questions()}
+    q       = q_map.get(lab_id)
+    if not q or q.get('type') != 'lab':
+        return jsonify({'error': 'Lab not found'}), 404
+    devices = extract_lab_devices(q.get('explanation', ''))
+    results = {}
+    for key, dev_data in devices.items():
+        user_text = configs.get(dev_data['name'], configs.get(key, ''))
+        if not user_text.strip():
+            results[dev_data['name']] = {'skipped': True, 'commands': []}
+            continue
+        showrun_lines = [_normalize(l) for l in user_text.splitlines() if l.strip() and not l.strip().startswith('!')]
+        cmd_results = []
+        for cmd in dev_data['commands']:
+            match = _cmd_in_showrun(cmd, showrun_lines)
+            if match is None:
+                continue
+            cmd_results.append({'cmd': cmd, 'ok': match})
+        results[dev_data['name']] = {'skipped': False, 'commands': cmd_results}
+    return jsonify({'results': results})
+
+
+_parse_state = {'running': False, 'page': 0, 'total': 0, 'done': False, 'error': None, 'count': 0}
+
+@app.route('/api/parse-status')
+def parse_status():
+    return jsonify(_parse_state)
+
 @app.route('/api/parse', methods=['POST'])
 def parse_pdf():
-    from parser import parse_questions
+    global _parse_state
+    if _parse_state['running']:
+        return jsonify({'error': 'Parse already running'}), 400
     data     = request.get_json()
     pdf_path = data.get('path', '')
     if not os.path.exists(pdf_path):
         return jsonify({'error': 'File not found'}), 400
-    try:
-        questions = parse_questions(pdf_path)
-        with open(QUESTIONS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(questions, f, ensure_ascii=False, indent=2)
-        invalidate_questions_cache()
-        return jsonify({'count': len(questions), 'ok': True})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+
+    _parse_state = {'running': True, 'page': 0, 'total': 0, 'done': False, 'error': None, 'count': 0}
+
+    def do_parse():
+        global _parse_state
+        try:
+            from parser import parse_questions
+
+            def on_progress(page, total):
+                _parse_state['page'] = page
+                _parse_state['total'] = total
+
+            questions = parse_questions(pdf_path, progress_callback=on_progress)
+            with open(QUESTIONS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(questions, f, ensure_ascii=False, indent=2)
+            invalidate_questions_cache()
+            _parse_state.update({'running': False, 'done': True, 'count': len(questions)})
+        except Exception as e:
+            _parse_state.update({'running': False, 'done': True, 'error': str(e)})
+
+    threading.Thread(target=do_parse, daemon=True).start()
+    return jsonify({'ok': True, 'started': True})
 
 
 if __name__ == '__main__':

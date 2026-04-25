@@ -84,6 +84,7 @@
     .q-dot.wrong    { background: #3b0a0a; color: #f87171; border-color: #ef4444; }
     .q-dot.active   { background: #1a56db; color: #fff; border-color: #60a5fa; }
     .q-dot.skipped  { background: #1f2937; color: #6b7280; border-color: #374151; }
+    .q-dot.lab      { background: #1c0a00; color: #fbbf24; border-color: #78350f; }
 
     /* Legend */
     .legend { padding: 0 14px 14px; display: flex; flex-direction: column; gap: 6px; }
@@ -270,6 +271,130 @@
     .lightbox img { max-width: 95vw; max-height: 90vh; border-radius: 8px; }
 
     .hidden { display: none !important; }
+
+    /* ── LAB CARD ── */
+    .q-card.lab-card { border-color: #78350f; background: #0d1117; }
+    .lab-badge {
+      font-size: 11px; font-weight: 600;
+      background: #451a03; color: #fbbf24;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .lab-tasks {
+      background: #111827; border: 1px solid #1f2937;
+      border-radius: 10px; padding: 14px 16px;
+      font-size: 13px; color: #d1d5db; line-height: 1.75;
+      white-space: pre-wrap; margin-bottom: 14px;
+    }
+    /* Solution panel */
+    .lab-solution { display: none; margin-bottom: 14px; }
+    .lab-solution.open { display: block; }
+    .solution-task {
+      background: #111827; border: 1px solid #374151;
+      border-radius: 10px; margin-bottom: 10px; overflow: hidden;
+    }
+    .solution-task-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 10px 14px; cursor: pointer;
+      background: #1a1f2e; border-bottom: 1px solid #374151;
+    }
+    .solution-task-header:hover { background: #1f2937; }
+    .solution-task-title { font-size: 13px; font-weight: 700; color: #fbbf24; }
+    .solution-task-check {
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 2px solid #374151; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; font-weight: 700;
+      color: #374151; transition: all 0.2s; flex-shrink: 0;
+    }
+    .solution-task-check.done { background: #10b981; border-color: #10b981; color: #fff; }
+    .solution-task-body { padding: 12px 14px; font-size: 12.5px; line-height: 1.7; color: #9ca3af; }
+    .solution-task-body code {
+      display: block; background: #0a0e1a; border: 1px solid #1f2937;
+      border-radius: 6px; padding: 8px 12px; margin: 6px 0;
+      font-family: 'Consolas', 'Monaco', monospace; font-size: 12px;
+      color: #86efac; white-space: pre; overflow-x: auto;
+    }
+    .solution-task-body .cmd-line { color: #67e8f9; }
+    .task-done-btn {
+      margin-top: 10px; padding: 7px 14px; border: 1px solid #10b981;
+      border-radius: 7px; background: transparent; color: #10b981;
+      font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .task-done-btn:hover { background: #064e3b; }
+    .task-done-btn.checked { background: #064e3b; cursor: default; opacity: 0.7; }
+    /* Buttons */
+    .btn-solution {
+      padding: 9px 16px; border: 1px solid #374151; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: #1f2937; color: #9ca3af; transition: all 0.12s; margin-bottom: 10px;
+    }
+    .btn-solution:hover { background: #263040; color: #d1d5db; }
+    .btn-pt {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border: 1px solid #78350f; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: #1c0a00; color: #fbbf24; transition: all 0.12s; margin-bottom: 10px;
+    }
+    .btn-pt:hover { background: #2d1200; border-color: #f59e0b; }
+    .btn-lab-done {
+      width: 100%; padding: 11px; border: none; border-radius: 9px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      background: linear-gradient(135deg,#78350f,#f59e0b); color: #fff;
+      transition: opacity 0.15s;
+    }
+    .btn-lab-done:hover { opacity: 0.9; }
+    .lab-assess-row { display: flex; gap: 10px; margin-top: 4px; }
+    .lab-assess-row button {
+      flex: 1; padding: 11px; border: none; border-radius: 9px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+    }
+    .btn-lab-correct { background: linear-gradient(135deg,#065f46,#10b981); color: #fff; }
+    .btn-lab-wrong   { background: linear-gradient(135deg,#7f1d1d,#ef4444); color: #fff; }
+
+    /* ── VERIFY PANEL ── */
+    .verify-panel { margin-bottom: 14px; }
+    .verify-tabs { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
+    .verify-tab {
+      padding: 6px 14px; border: 1px solid #374151; border-radius: 8px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      background: #1f2937; color: #6b7280; transition: all 0.12s;
+    }
+    .verify-tab.active { background: #1e3a5f; color: #60a5fa; border-color: #3b82f6; }
+    .verify-tab.ok     { border-color: #10b981; color: #10b981; background: #064e3b; }
+    .verify-tab.fail   { border-color: #ef4444; color: #ef4444; background: #3b0a0a; }
+    .verify-device { display: none; }
+    .verify-device.active { display: block; }
+    .verify-device textarea {
+      width: 100%; height: 160px;
+      background: #0a0e1a; border: 1px solid #374151; border-radius: 8px;
+      padding: 10px 12px; color: #86efac;
+      font-family: 'Consolas','Monaco',monospace; font-size: 12px;
+      resize: vertical; outline: none; margin-bottom: 8px;
+    }
+    .verify-device textarea:focus { border-color: #3b82f6; }
+    .verify-device textarea::placeholder { color: #374151; }
+    .btn-verify {
+      width: 100%; padding: 9px; border: none; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: linear-gradient(135deg,#1a56db,#0ea5e9); color: #fff;
+      transition: opacity 0.15s; margin-bottom: 10px;
+    }
+    .btn-verify:hover { opacity: 0.9; }
+    .verify-results { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .verify-result-row {
+      display: flex; align-items: flex-start; gap: 8px;
+      padding: 6px 10px; border-radius: 7px; font-size: 12px;
+    }
+    .verify-result-row.ok   { background: #064e3b; color: #6ee7b7; }
+    .verify-result-row.fail { background: #3b0a0a; color: #fca5a5; }
+    .verify-icon { font-weight: 700; min-width: 14px; flex-shrink: 0; }
+    .verify-cmd  { font-family: 'Consolas','Monaco',monospace; }
+    .verify-summary {
+      padding: 8px 12px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; margin-bottom: 8px; text-align: center;
+    }
+    .verify-summary.all-ok  { background: #064e3b; color: #34d399; }
+    .verify-summary.partial { background: #3b1f00; color: #fbbf24; }
+    .verify-summary.fail    { background: #3b0a0a; color: #f87171; }
   </style>
 </head>
 <body>
@@ -306,6 +431,7 @@
       <div class="legend-row"><div class="legend-dot" style="background:#064e3b;border:1px solid #10b981"></div> Correct</div>
       <div class="legend-row"><div class="legend-dot" style="background:#3b0a0a;border:1px solid #ef4444"></div> Wrong</div>
       <div class="legend-row"><div class="legend-dot" style="background:#1f2937;border:1px solid #374151"></div> Not answered</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#1c0a00;border:1px solid #78350f"></div> Lab reviewed</div>
     </div>
 
     <div style="flex:1"></div>
@@ -329,7 +455,8 @@
     <div id="loading" style="color:#6b7280;text-align:center;padding:60px">Loading questions...</div>
 
     <div id="question-wrap" class="hidden">
-      <div class="q-card">
+      <!-- MCQ card -->
+      <div class="q-card" id="mcq-card">
         <div class="q-meta">
           <span class="q-badge" id="q-badge">Q1</span>
           <span class="multi-badge hidden" id="multi-badge">Choose multiple</span>
@@ -342,6 +469,46 @@
           <button class="btn-check" id="btn-check" onclick="checkAnswer()" disabled>Check Answer</button>
           <button class="btn-skip" onclick="skipQuestion()">Skip →</button>
         </div>
+      </div>
+
+      <!-- Lab card -->
+      <div class="q-card lab-card hidden" id="lab-card">
+        <div class="q-meta">
+          <span class="q-badge" id="lab-badge-q">Q1</span>
+          <span class="lab-badge">Lab Simulation</span>
+          <span id="lab-task-progress" style="font-size:11px;color:#6b7280;margin-left:4px"></span>
+        </div>
+        <img id="lab-img" class="exhibit-img hidden" src="" alt="Topology" onclick="openLightbox(this.src)">
+        <div class="q-text" style="color:#fbbf24;margin-bottom:10px">Tasks</div>
+        <div class="lab-tasks" id="lab-tasks"></div>
+
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <button class="btn-pt" onclick="openPacketTracer()" style="margin-bottom:0;flex:1">
+            <span>🖧</span> Abrir Packet Tracer
+          </button>
+          <button class="btn-solution" id="btn-solution" onclick="toggleSolution()" style="margin-bottom:0;flex:1">
+            Mostrar Correção ▾
+          </button>
+        </div>
+
+        <div class="lab-solution" id="lab-solution"></div>
+
+        <!-- Verify panel -->
+        <div class="verify-panel" id="verify-panel" style="display:none">
+          <div style="font-size:12px;font-weight:700;color:#60a5fa;margin-bottom:8px;text-transform:uppercase;letter-spacing:0.06em">
+            Verificar Configuração
+          </div>
+          <div class="verify-tabs" id="verify-tabs"></div>
+          <div id="verify-devices"></div>
+          <button class="btn-verify" onclick="verifyLab()">Verificar ✓</button>
+          <div id="verify-results"></div>
+        </div>
+
+        <div id="lab-assess" class="lab-assess-row hidden">
+          <button class="btn-lab-correct" onclick="labAssess(true)">Acertei ✓</button>
+          <button class="btn-lab-wrong"   onclick="labAssess(false)">Errei ✗</button>
+        </div>
+        <button class="btn-lab-done" id="btn-lab-done" onclick="labDone()">Marcar como Revisado →</button>
       </div>
     </div>
 
@@ -397,30 +564,25 @@ async function init() {
   mode = sessionStorage.getItem('studyMode') || 'sequential';
   const count = sessionStorage.getItem('studyCount') || 20;
 
-  // Check if there's an active session to resume
+  // Check if there's an active session to resume — only if mode matches
   const sessionRes = await fetch('/api/study/session');
   const sessionData = await sessionRes.json();
 
-  if (sessionData.active) {
+  if (sessionData.active && sessionData.state.mode === mode) {
     const s = sessionData.state;
-    // Restore state
     questions      = s.questions;
-    results        = s.results.map(r => r === null ? null : r);  // keep null as null
+    results        = s.results.map(r => r === null ? null : r);
     current        = s.current;
     sessionCorrect = s.correct;
     sessionWrong   = s.wrong;
-    mode           = s.mode;
     startPosition  = s.start_position;
 
     buildGrid();
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('question-wrap').classList.remove('hidden');
 
-    // Find first unanswered to resume at
     const firstUnanswered = results.findIndex(r => r === null);
     showQuestion(firstUnanswered === -1 ? current : firstUnanswered);
-
-    // Show resume banner briefly
     showResumeBanner();
     return;
   }
@@ -494,10 +656,11 @@ function updateGrid() {
     const dot = document.getElementById(`dot-${i}`);
     if (!dot) return;
     dot.className = 'q-dot';
-    if (i === current)          dot.classList.add('active');
-    else if (results[i] === true)  dot.classList.add('correct');
-    else if (results[i] === false) dot.classList.add('wrong');
-    else if (results[i] === 'skip') dot.classList.add('skipped');
+    if (i === current)               dot.classList.add('active');
+    else if (results[i] === true)    dot.classList.add('correct');
+    else if (results[i] === false)   dot.classList.add('wrong');
+    else if (results[i] === 'skip')  dot.classList.add('skipped');
+    else if (results[i] === 'lab')   dot.classList.add('lab');
   });
 }
 
@@ -523,37 +686,335 @@ function showQuestion(idx) {
   selectedAnswers = [];
 
   const q = questions[idx];
+  const isLab = q.type === 'lab';
 
-  // Badges
-  document.getElementById('q-badge').textContent = `Q${q.id}  (${idx + 1}/${questions.length})`;
-  document.getElementById('multi-badge').classList.toggle('hidden', !q.multiple);
-  document.getElementById('exhibit-badge').classList.toggle('hidden', !q.has_exhibit || !q.image);
+  document.getElementById('mcq-card').classList.toggle('hidden', isLab);
+  document.getElementById('lab-card').classList.toggle('hidden', !isLab);
 
-  // Image
-  const imgEl = document.getElementById('exhibit-img');
-  if (q.image) { imgEl.src = `/static/images/${q.image}`; imgEl.classList.remove('hidden'); }
-  else          { imgEl.classList.add('hidden'); imgEl.src = ''; }
+  if (isLab) {
+    document.getElementById('lab-badge-q').textContent = `Q${q.id}  (${idx + 1}/${questions.length})`;
+    document.getElementById('lab-tasks').textContent = q.question;
+    renderSolution(q.explanation);
+    document.getElementById('lab-solution').classList.remove('open');
+    document.getElementById('btn-solution').textContent = 'Mostrar Correção ▾';
+    document.getElementById('btn-solution').classList.toggle('hidden', !q.explanation);
+    document.getElementById('lab-task-progress').textContent = '';
+    loadVerifyPanel(q.id);
+    const labImg = document.getElementById('lab-img');
+    if (q.image) { labImg.src = `/static/images/${q.image}`; labImg.classList.remove('hidden'); }
+    else          { labImg.classList.add('hidden'); labImg.src = ''; }
+    // Show self-assessment buttons only in labs mode
+    const assess = document.getElementById('lab-assess');
+    const donBtn = document.getElementById('btn-lab-done');
+    if (mode === 'labs') {
+      assess.classList.remove('hidden');
+      assess.style.display = 'flex';
+      donBtn.classList.add('hidden');
+    } else {
+      assess.classList.add('hidden');
+      donBtn.classList.remove('hidden');
+    }
+  } else {
+    document.getElementById('q-badge').textContent = `Q${q.id}  (${idx + 1}/${questions.length})`;
+    document.getElementById('multi-badge').classList.toggle('hidden', !q.multiple);
+    document.getElementById('exhibit-badge').classList.toggle('hidden', !q.has_exhibit || !q.image);
 
-  document.getElementById('q-text').textContent = q.question;
+    const imgEl = document.getElementById('exhibit-img');
+    if (q.image) { imgEl.src = `/static/images/${q.image}`; imgEl.classList.remove('hidden'); }
+    else          { imgEl.classList.add('hidden'); imgEl.src = ''; }
 
-  // Options
-  const container = document.getElementById('options');
-  container.innerHTML = '';
-  Object.entries(q.options).forEach(([letter, text]) => {
-    const div = document.createElement('div');
-    div.className = 'option';
-    div.dataset.letter = letter;
-    div.innerHTML = `<div class="option-key">${letter}</div><div class="option-text">${text}</div>`;
-    div.onclick = () => selectOption(letter, q, div);
-    container.appendChild(div);
-  });
+    document.getElementById('q-text').textContent = q.question;
 
-  document.getElementById('btn-check').disabled = true;
+    const container = document.getElementById('options');
+    container.innerHTML = '';
+    Object.entries(q.options).forEach(([letter, text]) => {
+      const div = document.createElement('div');
+      div.className = 'option';
+      div.dataset.letter = letter;
+      div.innerHTML = `<div class="option-key">${letter}</div><div class="option-text">${text}</div>`;
+      div.onclick = () => selectOption(letter, q, div);
+      container.appendChild(div);
+    });
+
+    document.getElementById('btn-check').disabled = true;
+  }
+
   updateGrid();
   updateSidebar();
-
-  // Scroll question area to top
   document.getElementById('q-area').scrollTop = 0;
+}
+
+// ── CLI command detection ─────────────────────────────────────────────────────
+const CLI_KEYWORDS = /^(conf(igure)?(\s+t(erminal)?)?$|int(erface)?\s|ip\s|ipv6\s|no\s|switchport\s|vlan\s|router\s|spanning|access-|shutdown|no shutdown|end$|exit$|show\s|ping\s|copy\s|write\s|hostname\s|banner\s|enable\s|service\s|line\s|username\s|crypto\s|aaa\s|snmp\s|logging\s|ntp\s|clock\s|network\s|passive|default-|area\s|neighbor\s|redistribute|eigrp\s|ospf\s)/i;
+
+function isCliLine(line) {
+  return CLI_KEYWORDS.test(line.trim());
+}
+
+function parseLabSolution(explanation) {
+  if (!explanation) return [];
+  // Split by Task N: / Task N – patterns
+  const taskRe = /(Task\s+\d+\s*[:\-–])/gi;
+  const parts   = explanation.split(taskRe);
+  const tasks   = [];
+
+  if (parts.length <= 1) {
+    // No task headers — treat whole explanation as one block
+    tasks.push({ title: 'Solução', content: explanation });
+  } else {
+    for (let i = 1; i < parts.length; i += 2) {
+      tasks.push({ title: parts[i].trim(), content: parts[i + 1] || '' });
+    }
+  }
+  return tasks;
+}
+
+function renderSolutionTask(task, idx) {
+  const lines = task.content.split(/\s{2,}|\n/).map(l => l.trim()).filter(Boolean);
+  let bodyHtml = '';
+  let cmdBuffer = [];
+
+  const flushCmds = () => {
+    if (cmdBuffer.length) {
+      bodyHtml += `<code>${cmdBuffer.join('\n')}</code>`;
+      cmdBuffer = [];
+    }
+  };
+
+  lines.forEach(line => {
+    if (isCliLine(line)) {
+      cmdBuffer.push(line);
+    } else {
+      flushCmds();
+      bodyHtml += `<p style="margin:4px 0;color:#9ca3af">${line}</p>`;
+    }
+  });
+  flushCmds();
+
+  return `
+    <div class="solution-task" id="sol-task-${idx}">
+      <div class="solution-task-header" onclick="toggleTaskBody(${idx})">
+        <span class="solution-task-title">${task.title}</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="solution-task-check" id="task-check-${idx}"></div>
+          <span style="font-size:11px;color:#4b5563" id="task-chevron-${idx}">▾</span>
+        </div>
+      </div>
+      <div class="solution-task-body" id="sol-body-${idx}">
+        ${bodyHtml}
+        <button class="task-done-btn" id="task-btn-${idx}" onclick="markTaskDone(${idx}, event)">
+          Marcar task como concluída ✓
+        </button>
+      </div>
+    </div>`;
+}
+
+let labTaskCount = 0;
+let labTasksDone = new Set();
+
+function renderSolution(explanation) {
+  const tasks = parseLabSolution(explanation);
+  labTaskCount = tasks.length;
+  labTasksDone = new Set();
+  const el = document.getElementById('lab-solution');
+  el.innerHTML = tasks.map((t, i) => renderSolutionTask(t, i)).join('');
+  updateLabAssessButtons();
+}
+
+function toggleTaskBody(idx) {
+  const body    = document.getElementById(`sol-body-${idx}`);
+  const chevron = document.getElementById(`task-chevron-${idx}`);
+  const visible = body.style.display !== 'none';
+  body.style.display = visible ? 'none' : '';
+  chevron.textContent = visible ? '›' : '▾';
+}
+
+function markTaskDone(idx, e) {
+  e.stopPropagation();
+  labTasksDone.add(idx);
+  const check = document.getElementById(`task-check-${idx}`);
+  const btn   = document.getElementById(`task-btn-${idx}`);
+  check.classList.add('done');
+  check.textContent = '✓';
+  btn.classList.add('checked');
+  btn.textContent = 'Concluída ✓';
+  btn.disabled = true;
+  const done = labTasksDone.size;
+  document.getElementById('lab-task-progress').textContent =
+    `${done}/${labTaskCount} tasks concluídas`;
+  updateLabAssessButtons();
+}
+
+function updateLabAssessButtons() {
+  const assess  = document.getElementById('lab-assess');
+  const doneBtn = document.getElementById('btn-lab-done');
+  if (mode !== 'labs') return;
+  const allDone = labTasksDone.size >= labTaskCount;
+  assess.classList.toggle('hidden', !allDone);
+  if (allDone) { assess.style.display = 'flex'; doneBtn.classList.add('hidden'); }
+}
+
+function toggleSolution() {
+  const sol = document.getElementById('lab-solution');
+  const btn = document.getElementById('btn-solution');
+  const open = sol.classList.toggle('open');
+  btn.textContent = open ? 'Ocultar Correção ▴' : 'Mostrar Correção ▾';
+}
+
+async function openPacketTracer() {
+  await fetch('/api/open-packet-tracer', { method: 'POST' });
+}
+
+// ── VERIFY PANEL ─────────────────────────────────────────────────────────────
+let verifyDevices = [];
+
+async function loadVerifyPanel(labId) {
+  const res  = await fetch(`/api/lab/${labId}/devices`);
+  const data = await res.json();
+  verifyDevices = data.devices || [];
+
+  const panel = document.getElementById('verify-panel');
+  const tabs  = document.getElementById('verify-tabs');
+  const devs  = document.getElementById('verify-devices');
+
+  if (!verifyDevices.length) { panel.style.display = 'none'; return; }
+
+  panel.style.display = 'block';
+  tabs.innerHTML = '';
+  devs.innerHTML = '';
+
+  verifyDevices.forEach((dev, i) => {
+    // Tab
+    const tab = document.createElement('button');
+    tab.className = 'verify-tab' + (i === 0 ? ' active' : '');
+    tab.id = `vtab-${i}`;
+    tab.textContent = dev.name;
+    tab.onclick = () => switchVerifyTab(i);
+    tabs.appendChild(tab);
+
+    // Device panel
+    const pane = document.createElement('div');
+    pane.className = 'verify-device' + (i === 0 ? ' active' : '');
+    pane.id = `vdev-${i}`;
+    pane.innerHTML = `
+      <textarea id="vta-${i}" placeholder="Cole aqui o output do 'show running-config' do ${dev.name}..."></textarea>`;
+    devs.appendChild(pane);
+  });
+
+  document.getElementById('verify-results').innerHTML = '';
+}
+
+function switchVerifyTab(idx) {
+  verifyDevices.forEach((_, i) => {
+    document.getElementById(`vtab-${i}`)?.classList.toggle('active', i === idx);
+    document.getElementById(`vdev-${i}`)?.classList.toggle('active', i === idx);
+  });
+}
+
+async function verifyLab() {
+  const q = questions[current];
+  const configs = {};
+  verifyDevices.forEach((dev, i) => {
+    const ta = document.getElementById(`vta-${i}`);
+    if (ta?.value.trim()) configs[dev.name] = ta.value;
+  });
+
+  const res  = await fetch('/api/lab/verify', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ lab_id: q.id, configs })
+  });
+  const data = await res.json();
+  renderVerifyResults(data.results);
+}
+
+function renderVerifyResults(results) {
+  const container = document.getElementById('verify-results');
+  container.innerHTML = '';
+
+  let totalOk = 0, totalFail = 0;
+
+  verifyDevices.forEach((dev, i) => {
+    const r = results[dev.name];
+    if (!r || r.skipped) return;
+
+    const devOk   = r.commands.filter(c => c.ok).length;
+    const devFail = r.commands.filter(c => !c.ok).length;
+    totalOk   += devOk;
+    totalFail += devFail;
+
+    // Update tab color
+    const tab = document.getElementById(`vtab-${i}`);
+    if (tab) {
+      tab.classList.remove('ok','fail');
+      tab.classList.add(devFail === 0 ? 'ok' : 'fail');
+    }
+
+    // Render results in this device's pane
+    const pane = document.getElementById(`vdev-${i}`);
+    let html = '<div class="verify-results">';
+    r.commands.forEach(c => {
+      html += `<div class="verify-result-row ${c.ok ? 'ok' : 'fail'}">
+        <span class="verify-icon">${c.ok ? '✓' : '✗'}</span>
+        <span class="verify-cmd">${c.cmd}</span>
+      </div>`;
+    });
+    html += '</div>';
+    // Insert results after textarea
+    const existing = pane.querySelector('.verify-results');
+    if (existing) existing.remove();
+    pane.insertAdjacentHTML('beforeend', html);
+  });
+
+  // Global summary
+  const total = totalOk + totalFail;
+  if (total > 0) {
+    const pct = Math.round(totalOk / total * 100);
+    const cls = pct === 100 ? 'all-ok' : pct >= 60 ? 'partial' : 'fail';
+    const msg = pct === 100
+      ? `Perfeito! Todas as ${total} configurações corretas ✓`
+      : `${totalOk}/${total} configurações corretas (${pct}%)`;
+    container.innerHTML = `<div class="verify-summary ${cls}">${msg}</div>`;
+
+    // Auto-fill assess buttons if mode=labs
+    if (mode === 'labs' && labTasksDone.size >= labTaskCount) {
+      // already unlocked
+    } else if (mode === 'labs') {
+      // unlock assess based on result
+      const assess  = document.getElementById('lab-assess');
+      const doneBtn = document.getElementById('btn-lab-done');
+      assess.classList.remove('hidden');
+      assess.style.display = 'flex';
+      doneBtn.classList.add('hidden');
+    }
+  }
+}
+
+async function labAssess(correct) {
+  const q = questions[current];
+  await fetch('/api/study/lab-result', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: q.id, correct, index: current })
+  });
+  if (correct) sessionCorrect++; else sessionWrong++;
+  results[current] = correct;
+  updateGrid();
+  updateSidebar();
+  persistSession();
+  const next = findNext();
+  if (next === -1) showSummary();
+  else showQuestion(next);
+}
+
+function labDone() {
+  results[current] = 'lab';
+  updateGrid();
+  updateSidebar();
+  persistSession();
+  const next = findNext();
+  if (next === -1) showSummary();
+  else showQuestion(next);
 }
 
 function selectOption(letter, q, div) {
@@ -699,6 +1160,12 @@ async function showSummary() {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ count: questions.length, correct: sessionCorrect, wrong: sessionWrong })
+    });
+  } else if (mode === 'labs') {
+    await fetch('/api/study/labs/advance', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ count: questions.length })
     });
   }
 }

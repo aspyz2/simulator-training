@@ -55,14 +55,27 @@ def extract_page_image(page, q_num, img_index=0):
 
 
 def parse_options(block):
-    """Parse answer options. Format: letter on one line, text on next lines."""
+    """Parse answer options. Handles inline text (A. text) and image-only options (A. with no text)."""
     options = {}
-    pattern = re.compile(r'^([A-E])\.\s*\n(.*?)(?=^[A-E]\.\s*$|Answer:|$)', re.MULTILINE | re.DOTALL)
-    for m in pattern.finditer(block):
+    # Try inline format first: A. some text on same line
+    inline = re.compile(r'^([A-E])\.\s+(.+)', re.MULTILINE)
+    for m in inline.finditer(block):
+        if m.group(2).strip() and not m.group(2).strip().startswith(tuple('ABCDE')):
+            options[m.group(1)] = m.group(2).strip()
+    if options:
+        return options
+    # Multi-line format: letter alone on a line, text on next lines
+    multiline = re.compile(r'^([A-E])\.\s*\n(.*?)(?=^[A-E]\.\s*[\n$]|Answer:|$)', re.MULTILINE | re.DOTALL)
+    for m in multiline.finditer(block):
         letter = m.group(1)
         text = re.sub(r'\n+', ' ', m.group(2)).strip()
-        if text:
-            options[letter] = text
+        options[letter] = text if text else '[See image]'
+    if options:
+        return options
+    # Image-only options: just letter lines with no text (A.\nB.\nC.\nD.)
+    letters = re.findall(r'^([A-E])\.\s*$', block, re.MULTILINE)
+    for letter in letters:
+        options[letter] = '[See image]'
     return options
 
 
@@ -106,6 +119,46 @@ def parse_questions(pdf_path, progress_callback=None):
                 i += 2
                 continue
 
+            # Lab simulation questions — parse tasks + explanation
+            if re.search(r'CORRECT TEXT', block[:60]):
+                expl_m = re.search(r'Explanation:\s*(.*?)(?=QUESTION NO:|$)', block, re.DOTALL)
+                expl   = re.sub(r'\n+', ' ', expl_m.group(1)).strip() if expl_m else ''
+                # Extract task block (between "Tasks" header and "Answer:")
+                task_m = re.search(r'Tasks\s*\n(.*?)(?=Answer:|Explanation:|$)', block, re.DOTALL)
+                task_text = re.sub(r'\n+', '\n', task_m.group(1)).strip() if task_m else ''
+                # Fallback: use everything before Answer: as description
+                if not task_text:
+                    pre_ans = re.split(r'\nAnswer:', block)[0]
+                    task_text = re.sub(r'CORRECT TEXT\s*\n?', '', pre_ans).strip()
+                    task_text = re.sub(r'Guidelines\s*\n.*?(?=Tasks|\Z)', '', task_text, flags=re.DOTALL).strip()
+                start_pg = q_start_page.get(q_id)
+                image_file = None
+                if start_pg is not None:
+                    for pg_offset in range(3):
+                        pg_idx = start_pg + pg_offset
+                        if pg_idx < len(pdf.pages) and page_has_images[pg_idx]:
+                            img_file = extract_page_image(pdf.pages[pg_idx], q_id)
+                            if img_file:
+                                image_file = img_file
+                                break
+                if task_text or expl:
+                    questions.append({
+                        'id': q_id,
+                        'question': task_text or 'Lab simulation — refer to Packet Tracer.',
+                        'options': {},
+                        'answers': [],
+                        'explanation': expl,
+                        'multiple': False,
+                        'image': image_file,
+                        'has_exhibit': False,
+                        'type': 'lab',
+                    })
+                i += 2
+                continue
+
+            # Detect DRAG DROP
+            is_drag_drop = bool(re.search(r'DRAG DROP', block[:60]))
+
             # Answer
             answer_match = re.search(r'^Answer:\s*([A-E][, A-E]*)\s*$', block, re.MULTILINE)
             correct_answers = []
@@ -120,19 +173,19 @@ def parse_questions(pdf_path, progress_callback=None):
                 explanation = re.sub(r'\n+', ' ', expl_match.group(1)).strip()
 
             # Question text
-            q_text_match = re.match(r'(.*?)(?=^[A-E]\.\s*$)', block, re.DOTALL | re.MULTILINE)
+            q_text_match = re.match(r'(.*?)(?=^[A-E]\.\s*[\n$]|Answer:|Explanation:)', block, re.DOTALL | re.MULTILINE)
             q_text = q_text_match.group(1).strip() if q_text_match else block.split('\n')[0].strip()
+            q_text = re.sub(r'^(DRAG DROP\s*)', '', q_text, flags=re.IGNORECASE).strip()
             q_text = re.sub(r'\n+', ' ', q_text).strip()
 
             # Options
-            options = parse_options(block)
+            options = parse_options(block) if not is_drag_drop else {}
 
             # Image: check starting page and next page for images
             image_file = None
             has_exhibit = 'exhibit' in q_text.lower() or 'refer to' in q_text.lower()
             start_pg = q_start_page.get(q_id)
             if start_pg is not None:
-                # Check current page and next page for images
                 for pg_offset in range(3):
                     pg_idx = start_pg + pg_offset
                     if pg_idx < len(pdf.pages) and page_has_images[pg_idx]:
@@ -141,7 +194,8 @@ def parse_questions(pdf_path, progress_callback=None):
                             image_file = img_file
                             break
 
-            if q_text and options and correct_answers:
+            # Include if we have question text and either options+answer or drag-drop
+            if q_text and (is_drag_drop or (options and correct_answers)):
                 questions.append({
                     'id': q_id,
                     'question': q_text,
@@ -151,6 +205,7 @@ def parse_questions(pdf_path, progress_callback=None):
                     'multiple': len(correct_answers) > 1,
                     'image': image_file,
                     'has_exhibit': has_exhibit,
+                    'type': 'drag_drop' if is_drag_drop else 'mcq',
                 })
 
             i += 2
