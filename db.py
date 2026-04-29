@@ -28,8 +28,7 @@ _PROGRESS_DEFAULT = {
 
 def load_progress(user_id: str) -> dict:
     res = _client.table('user_progress').select('data').eq('user_id', user_id).maybe_single().execute()
-    if res.data:
-        # Merge with defaults so new keys are always present
+    if res and res.data:
         merged = dict(_PROGRESS_DEFAULT)
         merged.update(res.data['data'])
         return merged
@@ -47,7 +46,7 @@ def save_progress(user_id: str, progress: dict):
 
 def load_active_study(user_id: str) -> Optional[dict]:
     res = _client.table('active_study').select('data').eq('user_id', user_id).maybe_single().execute()
-    return res.data['data'] if res.data and res.data.get('data') else None
+    return res.data['data'] if res and res.data and res.data.get('data') else None
 
 
 def save_active_study(user_id: str, state: dict):
@@ -68,7 +67,7 @@ def clear_active_study(user_id: str):
 
 def load_active_exam(user_id: str) -> Optional[dict]:
     res = _client.table('active_exam').select('data').eq('user_id', user_id).maybe_single().execute()
-    return res.data['data'] if res.data and res.data.get('data') else None
+    return res.data['data'] if res and res.data and res.data.get('data') else None
 
 
 def save_active_exam(user_id: str, state: dict):
