@@ -4,20 +4,41 @@ import re
 import random
 import threading
 from datetime import date
-from flask import Flask, render_template, jsonify, request, session
+from functools import wraps
+from typing import Optional
+from dotenv import load_dotenv
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for
+import db
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'ccna-simulator-secret-2024'
+app.secret_key = os.environ.get('FLASK_SECRET', 'ccna-simulator-secret-2024')
 
-BASE = os.path.dirname(__file__)
-QUESTIONS_FILE    = os.path.join(BASE, 'questions.json')
-PROGRESS_FILE     = os.path.join(BASE, 'progress.json')
-ACTIVE_STUDY_FILE = os.path.join(BASE, 'active_study.json')
-ACTIVE_EXAM_FILE  = os.path.join(BASE, 'active_exam.json')
+BASE           = os.path.dirname(__file__)
+QUESTIONS_FILE = os.path.join(BASE, 'questions.json')
+
+SUPABASE_URL  = os.environ['SUPABASE_URL']
+SUPABASE_ANON = os.environ['SUPABASE_ANON_KEY']
 
 
-# ── IN-MEMORY QUESTION CACHE ─────────────────────────────────────────────────
-# Reads questions.json once; reloads only if the file changes on disk.
+# ── AUTH HELPERS ──────────────────────────────────────────────────────────────
+
+def current_user_id() -> Optional[str]:
+    return session.get('user_id')
+
+def login_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not current_user_id():
+            if request.is_json:
+                return jsonify({'error': 'Unauthorized'}), 401
+            return redirect(url_for('login_page'))
+        return f(*args, **kwargs)
+    return decorated
+
+
+# ── IN-MEMORY QUESTION CACHE ──────────────────────────────────────────────────
 
 _q_cache = None
 _q_mtime = None
@@ -39,75 +60,73 @@ def invalidate_questions_cache():
     _q_mtime = None
 
 
-# ── PROGRESS ─────────────────────────────────────────────────────────────────
+# ── PROGRESS (per-user via Supabase) ─────────────────────────────────────────
 
 def load_progress():
-    default = {
-        'current_position': 0,
-        'total_studied': 0,
-        'daily_sessions': {},
-        'question_stats': {},
-        'batches': [],
-    }
-    if not os.path.exists(PROGRESS_FILE):
-        return default
-    with open(PROGRESS_FILE, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    for k, v in default.items():
-        data.setdefault(k, v)
-    return data
+    return db.load_progress(current_user_id())
 
 def save_progress(progress):
-    with open(PROGRESS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(progress, f, ensure_ascii=False, indent=2)
-
-
-# ── ACTIVE STUDY SESSION ──────────────────────────────────────────────────────
-# Saved to disk so browser close / server restart doesn't lose in-progress work.
+    db.save_progress(current_user_id(), progress)
 
 def load_active_study():
-    if not os.path.exists(ACTIVE_STUDY_FILE):
-        return None
-    with open(ACTIVE_STUDY_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    return db.load_active_study(current_user_id())
 
 def save_active_study(state):
-    with open(ACTIVE_STUDY_FILE, 'w', encoding='utf-8') as f:
-        json.dump(state, f, ensure_ascii=False, indent=2)
+    db.save_active_study(current_user_id(), state)
 
 def clear_active_study():
-    if os.path.exists(ACTIVE_STUDY_FILE):
-        os.remove(ACTIVE_STUDY_FILE)
-
-
-# ── ACTIVE EXAM SESSION ───────────────────────────────────────────────────────
+    db.clear_active_study(current_user_id())
 
 def load_active_exam():
-    if not os.path.exists(ACTIVE_EXAM_FILE):
-        return None
-    with open(ACTIVE_EXAM_FILE, 'r', encoding='utf-8') as f:
-        return json.load(f)
+    return db.load_active_exam(current_user_id())
 
 def save_active_exam(state):
-    with open(ACTIVE_EXAM_FILE, 'w', encoding='utf-8') as f:
-        json.dump(state, f, ensure_ascii=False, indent=2)
+    db.save_active_exam(current_user_id(), state)
 
 def clear_active_exam():
-    if os.path.exists(ACTIVE_EXAM_FILE):
-        os.remove(ACTIVE_EXAM_FILE)
+    db.clear_active_exam(current_user_id())
+
+
+# ── AUTH ROUTES ───────────────────────────────────────────────────────────────
+
+@app.route('/login')
+def login_page():
+    if current_user_id():
+        return redirect(url_for('index'))
+    return render_template('login.html',
+        supabase_url=SUPABASE_URL,
+        supabase_anon=SUPABASE_ANON,
+    )
+
+@app.route('/auth/session', methods=['POST'])
+def auth_session():
+    """Called by frontend after Supabase login — stores user_id in Flask session."""
+    token = request.get_json().get('access_token', '')
+    user_id = db.verify_token(token)
+    if not user_id:
+        return jsonify({'error': 'Invalid token'}), 401
+    session['user_id'] = user_id
+    session['token']   = token
+    return jsonify({'ok': True})
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login_page'))
 
 
 # ── PAGES ─────────────────────────────────────────────────────────────────────
 
 @app.route('/')
+@login_required
 def index():
     questions = load_questions()
     progress  = load_progress()
     today     = str(date.today())
     today_s   = progress['daily_sessions'].get(today, {})
     wrong_ids = [int(k) for k, v in progress['question_stats'].items() if v['wrong'] > v['correct']]
-    has_active_study = os.path.exists(ACTIVE_STUDY_FILE)
-    has_active_exam  = os.path.exists(ACTIVE_EXAM_FILE)
+    active_study = load_active_study()
+    active_exam  = load_active_exam()
 
     return render_template('index.html',
         total=len(questions),
@@ -116,27 +135,40 @@ def index():
         today_done=today_s.get('questions_done', 0),
         today_correct=today_s.get('correct', 0),
         wrong_count=len(wrong_ids),
-        has_active_study=has_active_study,
-        has_active_exam=has_active_exam,
+        has_active_study=bool(active_study),
+        has_active_exam=bool(active_exam),
     )
 
 
 @app.route('/study')
+@login_required
 def study():
     return render_template('study.html')
 
 
 @app.route('/exam')
+@login_required
 def exam():
-    if not os.path.exists(ACTIVE_EXAM_FILE) and 'exam_ids' not in session:
+    active_exam = load_active_exam()
+    if not active_exam and 'exam_ids' not in session:
+        progress = load_progress()
         return render_template('index.html', total=len(load_questions()),
                                error='Start an exam first.',
-                               has_active_study=os.path.exists(ACTIVE_STUDY_FILE),
+                               has_active_study=bool(load_active_study()),
                                has_active_exam=False,
-                               current_position=load_progress()['current_position'],
-                               total_studied=load_progress()['total_studied'],
+                               current_position=progress['current_position'],
+                               total_studied=progress['total_studied'],
                                today_done=0, today_correct=0, wrong_count=0)
     return render_template('exam.html')
+
+
+# ── GLOBAL API AUTH ───────────────────────────────────────────────────────────
+
+@app.before_request
+def require_login_for_api():
+    """All /api/ routes require an authenticated session."""
+    if request.path.startswith('/api/') and not current_user_id():
+        return jsonify({'error': 'Unauthorized'}), 401
 
 
 # ── STUDY MODE API ────────────────────────────────────────────────────────────

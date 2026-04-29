@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CCNA Simulator — Login</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0e1a; color: #e0e6f0;
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .card {
+      width: 100%; max-width: 400px;
+      background: #111827; border: 1px solid #1f2937;
+      border-radius: 16px; padding: 36px 32px;
+    }
+    .header { text-align: center; margin-bottom: 32px; }
+    .header h1 { font-size: 24px; font-weight: 800; color: #fff; margin-bottom: 6px; }
+    .header p  { font-size: 13px; color: #4b5563; }
+    .tabs {
+      display: flex; background: #1f2937; border-radius: 10px;
+      padding: 4px; margin-bottom: 24px; gap: 4px;
+    }
+    .tab {
+      flex: 1; padding: 8px; border: none; border-radius: 7px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      background: transparent; color: #6b7280; transition: all 0.15s;
+    }
+    .tab.active { background: #1e3a5f; color: #60a5fa; }
+    .field { margin-bottom: 16px; }
+    label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    input {
+      width: 100%; background: #1f2937; border: 1px solid #374151;
+      border-radius: 8px; padding: 10px 14px; color: #e0e6f0;
+      font-size: 14px; outline: none; transition: border-color 0.15s;
+    }
+    input:focus { border-color: #3b82f6; }
+    .btn {
+      width: 100%; padding: 12px; border: none; border-radius: 9px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      background: linear-gradient(135deg,#1a56db,#0ea5e9); color: #fff;
+      transition: opacity 0.15s; margin-top: 8px;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .msg { font-size: 13px; text-align: center; margin-top: 14px; min-height: 18px; }
+    .msg.err { color: #f87171; }
+    .msg.ok  { color: #34d399; }
+  </style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>🌐 CCNA 200-301</h1>
+    <p>Cisco Certified Network Associate</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-login"    onclick="showTab('login')">Entrar</button>
+    <button class="tab"        id="tab-register" onclick="showTab('register')">Criar conta</button>
+  </div>
+
+  <!-- Login -->
+  <div id="pane-login">
+    <div class="field"><label>Email</label><input type="email" id="l-email" placeholder="seu@email.com"></div>
+    <div class="field"><label>Senha</label><input type="password" id="l-pass" placeholder="••••••••"></div>
+    <button class="btn" onclick="doLogin()">Entrar</button>
+  </div>
+
+  <!-- Register -->
+  <div id="pane-register" style="display:none">
+    <div class="field"><label>Email</label><input type="email" id="r-email" placeholder="seu@email.com"></div>
+    <div class="field"><label>Senha</label><input type="password" id="r-pass" placeholder="mínimo 6 caracteres"></div>
+    <div class="field"><label>Confirmar senha</label><input type="password" id="r-pass2" placeholder="repita a senha"></div>
+    <button class="btn" onclick="doRegister()">Criar conta</button>
+  </div>
+
+  <div class="msg" id="msg"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL  = '{{ supabase_url }}';
+const SUPABASE_ANON = '{{ supabase_anon }}';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+function showTab(t) {
+  document.getElementById('pane-login').style.display    = t === 'login'    ? '' : 'none';
+  document.getElementById('pane-register').style.display = t === 'register' ? '' : 'none';
+  document.getElementById('tab-login').classList.toggle('active',    t === 'login');
+  document.getElementById('tab-register').classList.toggle('active', t === 'register');
+  document.getElementById('msg').textContent = '';
+}
+
+function setMsg(text, type) {
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.className = 'msg ' + type;
+}
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  if (!email || !pass) { setMsg('Preencha email e senha.', 'err'); return; }
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  if (error) { setMsg(error.message, 'err'); return; }
+
+  // Send token to Flask backend to create session
+  const res = await fetch('/auth/session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ access_token: data.session.access_token })
+  });
+  if (res.ok) window.location.href = '/';
+  else setMsg('Erro ao iniciar sessão.', 'err');
+}
+
+async function doRegister() {
+  const email = document.getElementById('r-email').value.trim();
+  const pass  = document.getElementById('r-pass').value;
+  const pass2 = document.getElementById('r-pass2').value;
+  if (!email || !pass) { setMsg('Preencha todos os campos.', 'err'); return; }
+  if (pass !== pass2)  { setMsg('As senhas não coincidem.', 'err'); return; }
+  if (pass.length < 6) { setMsg('Senha mínimo de 6 caracteres.', 'err'); return; }
+
+  const { data, error } = await sb.auth.signUp({ email, password: pass });
+  if (error) { setMsg(error.message, 'err'); return; }
+
+  if (data.session) {
+    const res = await fetch('/auth/session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ access_token: data.session.access_token })
+    });
+    if (res.ok) window.location.href = '/';
+  } else {
+    setMsg('Conta criada! Verifique seu email para confirmar.', 'ok');
+  }
+}
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const loginVisible = document.getElementById('pane-login').style.display !== 'none';
+    loginVisible ? doLogin() : doRegister();
+  }
+});
+</script>
+</body>
+</html>
