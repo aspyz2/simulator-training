@@ -191,6 +191,39 @@
     .batch-jump:hover { background: #263040; color: #d1d5db; border-color: #4b5563; }
     .batch-current { border: 1px solid #1e3a5f; }
     .batch-current .batch-range { color: #60a5fa; }
+
+    /* Ranking */
+    .ranking-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ranking-table th {
+      text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: #4b5563; border-bottom: 1px solid #1f2937;
+    }
+    .ranking-table td { padding: 10px 12px; border-bottom: 1px solid #1a2235; }
+    .ranking-table tr:last-child td { border-bottom: none; }
+    .ranking-table tr.me td { background: #0f2040; }
+    .rank-num { font-weight: 800; color: #6b7280; width: 32px; }
+    .rank-num.gold   { color: #f59e0b; }
+    .rank-num.silver { color: #9ca3af; }
+    .rank-num.bronze { color: #b45309; }
+    .rank-name { font-weight: 600; color: #e0e6f0; }
+    .rank-name .me-badge {
+      font-size: 10px; font-weight: 700; background: #1e3a5f;
+      color: #60a5fa; padding: 2px 6px; border-radius: 4px; margin-left: 6px;
+    }
+    .rank-studied { color: #60a5fa; font-weight: 700; }
+    .rank-acc { color: #10b981; font-weight: 600; }
+    .ranking-empty { text-align: center; color: #4b5563; padding: 48px 0; font-size: 14px; }
+    .ranking-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .ranking-header h3 { font-size: 14px; font-weight: 700; color: #9ca3af; margin: 0; }
+    .ranking-refresh {
+      font-size: 12px; background: #1f2937; border: 1px solid #374151;
+      color: #6b7280; padding: 4px 10px; border-radius: 6px; cursor: pointer;
+    }
+    .ranking-refresh:hover { color: #d1d5db; background: #263040; }
   </style>
 </head>
 <body>
@@ -248,6 +281,7 @@
   <div class="tabs">
     <button class="tab-btn active" id="tab-questions" onclick="switchTab('questions')">📖 Questões</button>
     <button class="tab-btn" id="tab-labs" onclick="switchTab('labs')">🖧 Labs</button>
+    <button class="tab-btn" id="tab-ranking" onclick="switchTab('ranking')">🏆 Ranking</button>
   </div>
 
   <!-- ── TAB: QUESTÕES ── -->
@@ -343,6 +377,13 @@
           <button class="btn btn-orange" onclick="startLabs(event)">Iniciar Labs</button>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ── TAB: RANKING ── -->
+  <div class="tab-pane" id="pane-ranking">
+    <div id="ranking-wrap">
+      <div style="text-align:center;color:#4b5563;padding:40px 0">Carregando ranking...</div>
     </div>
   </div>
 
@@ -458,6 +499,56 @@ function switchTab(tab) {
   document.getElementById('tab-' + tab).classList.add('active');
   document.getElementById('pane-' + tab).classList.add('active');
   if (tab === 'questions') toggleSettings('study');
+  if (tab === 'ranking') loadRanking();
+}
+
+async function loadRanking() {
+  const wrap = document.getElementById('ranking-wrap');
+  wrap.innerHTML = '<div style="text-align:center;color:#4b5563;padding:40px 0">Carregando ranking...</div>';
+  const data = await fetch('/api/ranking').then(r => r.json());
+
+  if (!data.length) {
+    wrap.innerHTML = '<div class="ranking-empty">Nenhum usuário com questões estudadas ainda.<br>Seja o primeiro! 🚀</div>';
+    return;
+  }
+
+  const medalColors = ['gold','silver','bronze'];
+
+  let rows = data.map(e => {
+    const medal = e.rank <= 3 ? medalColors[e.rank - 1] : '';
+    const rankClass = medal ? `rank-num ${medal}` : 'rank-num';
+    const rankIcon = e.rank === 1 ? '🥇' : e.rank === 2 ? '🥈' : e.rank === 3 ? '🥉' : `#${e.rank}`;
+    const meBadge = e.is_me ? '<span class="me-badge">você</span>' : '';
+    const trClass = e.is_me ? 'me' : '';
+    return `<tr class="${trClass}">
+      <td class="${rankClass}">${rankIcon}</td>
+      <td class="rank-name">${e.name}${meBadge}</td>
+      <td class="rank-studied">${e.studied.toLocaleString()}</td>
+      <td class="rank-acc">${e.acc}%</td>
+    </tr>`;
+  }).join('');
+
+  wrap.innerHTML = `
+    <div class="ranking-header">
+      <h3>🏆 Top Estudantes — CCNA 200-301</h3>
+      <button class="ranking-refresh" onclick="loadRanking()">↻ Atualizar</button>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:14px;overflow:hidden">
+      <table class="ranking-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Estudante</th>
+            <th>Questões</th>
+            <th>Acerto</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:#374151;margin-top:10px;text-align:center">
+      Nomes gerados anonimamente · Score = questões × 0.7 + acerto% × 0.3
+    </div>`;
 }
 
 async function startLabs(e) {

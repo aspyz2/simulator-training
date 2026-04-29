@@ -84,6 +84,14 @@ def clear_active_exam(user_id: str):
     }).execute()
 
 
+# ── RANKING ───────────────────────────────────────────────────────────────────
+
+def load_all_progress() -> list:
+    """Return all user progress rows for ranking (service key bypasses RLS)."""
+    res = _client.table('user_progress').select('user_id, data').execute()
+    return res.data if res and res.data else []
+
+
 # ── AUTH ──────────────────────────────────────────────────────────────────────
 
 def verify_token(jwt_token: str) -> Optional[str]:

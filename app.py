@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 import re
@@ -656,6 +657,58 @@ def lab_verify():
         results[dev_data['name']] = {'skipped': False, 'commands': cmd_results}
     return jsonify({'results': results})
 
+
+# ── RANKING ───────────────────────────────────────────────────────────────────
+
+_ADJ  = ['Fast','Silent','Sharp','Bold','Swift','Clever','Bright','Solid',
+         'Agile','Steady','Smart','Rapid','Keen','Brave','Calm','Firm']
+_NOUN = ['Router','Switch','Packet','Frame','Bridge','Subnet','Vlan','Trunk',
+         'Gateway','Firewall','Cipher','Beacon','Probe','Stack','Node','Link']
+
+def _anon_name(user_id: str) -> str:
+    """Deterministic anonymous nickname from user_id hash."""
+    h = hashlib.sha256(user_id.encode()).hexdigest()
+    adj  = _ADJ [int(h[0:2], 16) % len(_ADJ)]
+    noun = _NOUN[int(h[2:4], 16) % len(_NOUN)]
+    tag  = h[4:8].upper()
+    return f"{adj}{noun}_{tag}"
+
+def _calc_accuracy(question_stats: dict) -> float:
+    total_c, total_w = 0, 0
+    for v in question_stats.values():
+        total_c += v.get('correct', 0)
+        total_w += v.get('wrong', 0)
+    total = total_c + total_w
+    return round(total_c / total * 100, 1) if total else 0.0
+
+@app.route('/api/ranking')
+@login_required
+def ranking():
+    rows = db.load_all_progress()
+    me   = current_user_id()
+    entries = []
+    for row in rows:
+        uid  = row['user_id']
+        data = row.get('data') or {}
+        studied = data.get('total_studied', 0)
+        if studied == 0:
+            continue
+        acc = _calc_accuracy(data.get('question_stats', {}))
+        # Score: weight studied (70%) + accuracy (30%)
+        score = round(studied * 0.7 + acc * 0.3, 2)
+        entries.append({
+            'name':    _anon_name(uid),
+            'studied': studied,
+            'acc':     acc,
+            'score':   score,
+            'is_me':   uid == me,
+        })
+
+    entries.sort(key=lambda x: x['score'], reverse=True)
+    for i, e in enumerate(entries):
+        e['rank'] = i + 1
+
+    return jsonify(entries)
 
 
 if __name__ == '__main__':
