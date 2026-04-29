@@ -141,25 +141,6 @@
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
 
-    .pdf-section {
-      background: #111827;
-      border: 1px solid #1f2937;
-      border-radius: 14px;
-      padding: 16px 20px;
-    }
-    .pdf-title { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #4b5563; margin-bottom: 12px; }
-    input[type=text] {
-      width: 100%;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 8px;
-      padding: 8px 12px;
-      color: #e0e6f0;
-      font-size: 13px;
-      outline: none;
-      margin-bottom: 8px;
-    }
-    input[type=text]:focus { border-color: #3b82f6; }
     .btn-sm { padding: 8px; font-size: 13px; margin-top: 0; }
     .btn-ghost { background: #1f2937; color: #9ca3af; border: 1px solid #374151; }
     .btn-ghost:hover { background: #263040; color: #d1d5db; }
@@ -175,11 +156,6 @@
       cursor: pointer;
     }
     select:focus { border-color: #3b82f6; }
-    #parseStatus { font-size: 12px; color: #6b7280; margin-top: 8px; min-height: 16px; }
-    #parseProgress { display: none; margin-top: 8px; }
-    #parseProgress .bar-wrap { background: #1f2937; border-radius: 4px; height: 6px; overflow: hidden; }
-    #parseProgress .bar-fill { height: 100%; background: linear-gradient(90deg,#1a56db,#0ea5e9); border-radius: 4px; transition: width 0.3s; width: 0%; }
-    #parseProgress .bar-label { font-size: 11px; color: #4b5563; margin-top: 4px; }
     .loading { color: #3b82f6; }
     .success { color: #10b981; }
     .fail { color: #ef4444; }
@@ -370,19 +346,6 @@
     </div>
   </div>
 
-  <!-- Load new PDF -->
-  <div class="pdf-section">
-    <div class="pdf-title">Load New PDF</div>
-    <select id="pdfSelect">
-      <option value="">— select a PDF —</option>
-    </select>
-    <button class="btn btn-ghost btn-sm" onclick="parsePDF()" style="margin-top:8px" id="parseBtn">Load PDF</button>
-    <div id="parseStatus"></div>
-    <div id="parseProgress">
-      <div class="bar-wrap"><div class="bar-fill" id="parseBar"></div></div>
-      <div class="bar-label" id="parseBarLabel">Lendo páginas...</div>
-    </div>
-  </div>
 </div>
 
 <script>
@@ -435,76 +398,6 @@ async function resetProgress(e) {
   await fetch('/api/study/reset', { method: 'POST' });
   window.location.reload();
 }
-
-async function parsePDF() {
-  const sel = document.getElementById('pdfSelect');
-  const path = sel.value;
-  if (!path) return;
-
-  const status   = document.getElementById('parseStatus');
-  const progress = document.getElementById('parseProgress');
-  const bar      = document.getElementById('parseBar');
-  const barLabel = document.getElementById('parseBarLabel');
-  const btn      = document.getElementById('parseBtn');
-
-  status.textContent = '';
-  progress.style.display = 'block';
-  bar.style.width = '0%';
-  barLabel.textContent = 'Iniciando...';
-  btn.disabled = true;
-
-  const res = await fetch('/api/parse', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ path })
-  });
-  const data = await res.json();
-  if (!data.ok) {
-    status.className = 'fail'; status.textContent = 'Erro: ' + data.error;
-    progress.style.display = 'none'; btn.disabled = false; return;
-  }
-
-  // Poll progress
-  const interval = setInterval(async () => {
-    const s = await fetch('/api/parse-status').then(r => r.json());
-    if (s.total > 0) {
-      const pct = Math.min(Math.round(s.page / s.total * 100), 99);
-      bar.style.width = pct + '%';
-      barLabel.textContent = `Página ${s.page} de ${s.total} (${pct}%)`;
-    }
-    if (s.done) {
-      clearInterval(interval);
-      btn.disabled = false;
-      progress.style.display = 'none';
-      if (s.error) {
-        status.className = 'fail'; status.textContent = 'Erro: ' + s.error;
-      } else {
-        bar.style.width = '100%';
-        status.className = 'success';
-        status.textContent = `Pronto! ${s.count} questões carregadas.`;
-        setTimeout(() => location.reload(), 1200);
-      }
-    }
-  }, 600);
-}
-
-(async () => {
-  const pdfs = await fetch('/api/list-pdfs').then(r => r.json());
-  const sel = document.getElementById('pdfSelect');
-  pdfs.forEach(p => {
-    const opt = document.createElement('option');
-    opt.value = p.path;
-    opt.textContent = p.name;
-    sel.appendChild(opt);
-  });
-  if (!pdfs.length) {
-    const opt = document.createElement('option');
-    opt.value = '';
-    opt.textContent = 'No PDFs found in Downloads/Desktop/Documents';
-    opt.disabled = true;
-    sel.appendChild(opt);
-  }
-})();
 
 // Load session history
 (async () => {

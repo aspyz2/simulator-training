@@ -2,7 +2,6 @@ import json
 import os
 import re
 import random
-import threading
 from datetime import date
 from functools import wraps
 from typing import Optional
@@ -53,11 +52,6 @@ def load_questions():
             _q_cache = json.load(f)
         _q_mtime = mtime
     return _q_cache
-
-def invalidate_questions_cache():
-    global _q_cache, _q_mtime
-    _q_cache = None
-    _q_mtime = None
 
 
 # ── PROGRESS (per-user via Supabase) ─────────────────────────────────────────
@@ -554,36 +548,6 @@ def submit():
 
 # ── PDF PARSE ─────────────────────────────────────────────────────────────────
 
-@app.route('/api/open-packet-tracer', methods=['POST'])
-def open_packet_tracer():
-    import subprocess, shutil
-    pt_path = '/Applications/Cisco Packet Tracer 9.0.0/Cisco Packet Tracer 9.0.app'
-    try:
-        if os.path.exists(pt_path):
-            subprocess.Popen(['open', pt_path])
-        else:
-            subprocess.Popen(['open', '-a', 'Cisco Packet Tracer'])
-        return jsonify({'ok': True})
-    except Exception as e:
-        return jsonify({'ok': False, 'error': str(e)})
-
-
-@app.route('/api/list-pdfs')
-def list_pdfs():
-    search_dirs = [
-        os.path.expanduser('~/Downloads'),
-        os.path.expanduser('~/Desktop'),
-        os.path.expanduser('~/Documents'),
-    ]
-    found = []
-    for d in search_dirs:
-        if not os.path.isdir(d):
-            continue
-        for name in sorted(os.listdir(d)):
-            if name.lower().endswith('.pdf'):
-                found.append({'name': name, 'path': os.path.join(d, name)})
-    return jsonify(found)
-
 
 # ── LAB VERIFICATION ──────────────────────────────────────────────────────────
 
@@ -692,44 +656,6 @@ def lab_verify():
         results[dev_data['name']] = {'skipped': False, 'commands': cmd_results}
     return jsonify({'results': results})
 
-
-_parse_state = {'running': False, 'page': 0, 'total': 0, 'done': False, 'error': None, 'count': 0}
-
-@app.route('/api/parse-status')
-def parse_status():
-    return jsonify(_parse_state)
-
-@app.route('/api/parse', methods=['POST'])
-def parse_pdf():
-    global _parse_state
-    if _parse_state['running']:
-        return jsonify({'error': 'Parse already running'}), 400
-    data     = request.get_json()
-    pdf_path = data.get('path', '')
-    if not os.path.exists(pdf_path):
-        return jsonify({'error': 'File not found'}), 400
-
-    _parse_state = {'running': True, 'page': 0, 'total': 0, 'done': False, 'error': None, 'count': 0}
-
-    def do_parse():
-        global _parse_state
-        try:
-            from parser import parse_questions
-
-            def on_progress(page, total):
-                _parse_state['page'] = page
-                _parse_state['total'] = total
-
-            questions = parse_questions(pdf_path, progress_callback=on_progress)
-            with open(QUESTIONS_FILE, 'w', encoding='utf-8') as f:
-                json.dump(questions, f, ensure_ascii=False, indent=2)
-            invalidate_questions_cache()
-            _parse_state.update({'running': False, 'done': True, 'count': len(questions)})
-        except Exception as e:
-            _parse_state.update({'running': False, 'done': True, 'error': str(e)})
-
-    threading.Thread(target=do_parse, daemon=True).start()
-    return jsonify({'ok': True, 'started': True})
 
 
 if __name__ == '__main__':
