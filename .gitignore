@@ -1,7 +1,6 @@
 __pycache__/
 *.pyc
 *.pyo
-questions.json
 progress.json
 active_study.json
 active_exam.json
