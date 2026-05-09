@@ -215,6 +215,9 @@ def study_questions():
         'has_exhibit': q.get('has_exhibit', False),
         'type': q.get('type', 'mcq'),
         'explanation': q.get('explanation', ''),
+        'drag_items': q.get('drag_items', []),
+        'drag_categories': q.get('drag_categories', []),
+        'drag_answers': q.get('drag_answers', {}),
     } for q in batch]
 
     # Create a fresh active session on disk
