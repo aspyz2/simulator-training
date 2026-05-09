@@ -652,21 +652,25 @@ async function init() {
 
   if (sessionData.active && sessionData.state.mode === mode) {
     const s = sessionData.state;
-    questions      = s.questions;
-    results        = s.results.map(r => r === null ? null : r);
-    current        = s.current;
-    sessionCorrect = s.correct;
-    sessionWrong   = s.wrong;
-    startPosition  = s.start_position;
+    // Invalidate session if any drag_drop question is missing drag_items (stale cache)
+    const hasStale = s.questions.some(q => q.type === 'drag_drop' && (!q.drag_items || q.drag_items.length === 0));
+    if (!hasStale) {
+      questions      = s.questions;
+      results        = s.results.map(r => r === null ? null : r);
+      current        = s.current;
+      sessionCorrect = s.correct;
+      sessionWrong   = s.wrong;
+      startPosition  = s.start_position;
 
-    buildGrid();
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('question-wrap').classList.remove('hidden');
+      buildGrid();
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('question-wrap').classList.remove('hidden');
 
-    const firstUnanswered = results.findIndex(r => r === null);
-    showQuestion(firstUnanswered === -1 ? current : firstUnanswered);
-    showResumeBanner();
-    return;
+      const firstUnanswered = results.findIndex(r => r === null);
+      showQuestion(firstUnanswered === -1 ? current : firstUnanswered);
+      showResumeBanner();
+      return;
+    }
   }
 
   // No active session — start fresh
@@ -1283,7 +1287,7 @@ function initDragDrop(q) {
   targets.innerHTML = '';
 
   // Shuffle items
-  const items = [...q.drag_items].sort(() => Math.random() - 0.5);
+  const items = [...(q.drag_items || [])].sort(() => Math.random() - 0.5);
 
   items.forEach(text => {
     pool.appendChild(makeDragItem(text));
