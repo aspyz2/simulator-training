@@ -350,6 +350,66 @@
     .btn-lab-correct { background: linear-gradient(135deg,#065f46,#10b981); color: #fff; }
     .btn-lab-wrong   { background: linear-gradient(135deg,#7f1d1d,#ef4444); color: #fff; }
 
+    /* ── DRAG & DROP ── */
+    .drag-type-badge {
+      font-size: 11px; font-weight: 600;
+      background: #1a1040; color: #a78bfa;
+      padding: 3px 10px; border-radius: 20px;
+    }
+    .drag-arena {
+      display: flex; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
+    }
+    .drag-pool-wrap {
+      flex: 1; min-width: 200px;
+    }
+    .drag-col-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.07em; color: #4b5563; margin-bottom: 8px;
+    }
+    .drag-pool {
+      display: flex; flex-direction: column; gap: 7px;
+      min-height: 60px;
+    }
+    .drag-targets {
+      flex: 1; min-width: 200px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .drag-category {
+      border: 2px dashed #374151; border-radius: 10px;
+      padding: 10px 12px; min-height: 80px;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .drag-category.drag-over {
+      border-color: #6366f1; background: #1e1b4b;
+    }
+    .drag-category-name {
+      font-size: 12px; font-weight: 700; color: #a78bfa;
+      margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .drag-category-items {
+      display: flex; flex-direction: column; gap: 6px; min-height: 36px;
+    }
+    .drag-item {
+      background: #1f2937; border: 2px solid #374151;
+      border-radius: 8px; padding: 9px 12px;
+      font-size: 12.5px; color: #d1d5db; cursor: grab;
+      user-select: none; transition: all 0.12s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .drag-item:before { content: '⠿'; color: #4b5563; font-size: 14px; flex-shrink: 0; }
+    .drag-item:hover  { background: #263040; border-color: #6366f1; }
+    .drag-item.dragging { opacity: 0.4; }
+    .drag-item.correct-item { background: #064e3b; border-color: #10b981; color: #6ee7b7; }
+    .drag-item.wrong-item   { background: #3b0a0a; border-color: #ef4444; color: #fca5a5; }
+    .drag-item.locked { cursor: default; }
+    .drag-result-banner {
+      padding: 10px 14px; border-radius: 8px; font-size: 13px;
+      font-weight: 600; margin-bottom: 14px; text-align: center;
+    }
+    .drag-result-banner.all-ok  { background: #064e3b; color: #34d399; }
+    .drag-result-banner.partial { background: #3b1f00; color: #fbbf24; }
+    .drag-result-banner.fail    { background: #3b0a0a; color: #f87171; }
+
     /* ── VERIFY PANEL ── */
     .verify-panel { margin-bottom: 14px; }
     .verify-tabs { display: flex; gap: 4px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -467,6 +527,28 @@
         <div class="options" id="options"></div>
         <div class="check-row">
           <button class="btn-check" id="btn-check" onclick="checkAnswer()" disabled>Check Answer</button>
+          <button class="btn-skip" onclick="skipQuestion()">Skip →</button>
+        </div>
+      </div>
+
+      <!-- Drag & Drop card -->
+      <div class="q-card hidden" style="border-color:#4c1d95" id="drag-card">
+        <div class="q-meta">
+          <span class="q-badge" id="drag-badge-q">Q1</span>
+          <span class="drag-type-badge">Drag &amp; Drop</span>
+        </div>
+        <img id="drag-img" class="exhibit-img hidden" src="" alt="Exhibit" onclick="openLightbox(this.src)">
+        <div class="q-text" id="drag-text"></div>
+        <div id="drag-result-banner"></div>
+        <div class="drag-arena">
+          <div class="drag-pool-wrap">
+            <div class="drag-col-label">Characteristics</div>
+            <div class="drag-pool" id="drag-pool"></div>
+          </div>
+          <div class="drag-targets" id="drag-targets"></div>
+        </div>
+        <div class="check-row">
+          <button class="btn-check" id="btn-drag-check" onclick="checkDragDrop()">Check Answer</button>
           <button class="btn-skip" onclick="skipQuestion()">Skip →</button>
         </div>
       </div>
@@ -687,11 +769,22 @@ function showQuestion(idx) {
 
   const q = questions[idx];
   const isLab = q.type === 'lab';
+  const isDragDrop = q.type === 'drag_drop';
 
-  document.getElementById('mcq-card').classList.toggle('hidden', isLab);
+  document.getElementById('mcq-card').classList.toggle('hidden', isLab || isDragDrop);
   document.getElementById('lab-card').classList.toggle('hidden', !isLab);
+  document.getElementById('drag-card').classList.toggle('hidden', !isDragDrop);
 
-  if (isLab) {
+  if (isDragDrop) {
+    document.getElementById('drag-badge-q').textContent = `Q${q.id}  (${idx + 1}/${questions.length})`;
+    document.getElementById('drag-text').textContent = q.question;
+    document.getElementById('drag-result-banner').innerHTML = '';
+    const dragImg = document.getElementById('drag-img');
+    if (q.image) { dragImg.src = `/static/images/${q.image}`; dragImg.classList.remove('hidden'); }
+    else          { dragImg.classList.add('hidden'); dragImg.src = ''; }
+    document.getElementById('btn-drag-check').disabled = false;
+    initDragDrop(q);
+  } else if (isLab) {
     document.getElementById('lab-badge-q').textContent = `Q${q.id}  (${idx + 1}/${questions.length})`;
     document.getElementById('lab-tasks').textContent = q.question;
     renderSolution(q.explanation);
@@ -1179,6 +1272,109 @@ function openLightbox(src) {
   document.getElementById('lightbox').classList.add('show');
 }
 function closeLightbox() { document.getElementById('lightbox').classList.remove('show'); }
+
+// ── DRAG & DROP ──────────────────────────────────────────────────────────────
+let dragSrcItem = null;
+
+function initDragDrop(q) {
+  const pool    = document.getElementById('drag-pool');
+  const targets = document.getElementById('drag-targets');
+  pool.innerHTML    = '';
+  targets.innerHTML = '';
+
+  // Shuffle items
+  const items = [...q.drag_items].sort(() => Math.random() - 0.5);
+
+  items.forEach(text => {
+    pool.appendChild(makeDragItem(text));
+  });
+
+  (q.drag_categories || []).forEach(cat => {
+    const zone = document.createElement('div');
+    zone.className = 'drag-category';
+    zone.dataset.cat = cat;
+    zone.innerHTML = `<div class="drag-category-name">${cat}</div><div class="drag-category-items" id="cat-${cat.replace(/\s+/g,'-')}"></div>`;
+    zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop',      e => { e.preventDefault(); zone.classList.remove('drag-over'); dropItem(zone.querySelector('.drag-category-items')); });
+    targets.appendChild(zone);
+  });
+}
+
+function makeDragItem(text) {
+  const el = document.createElement('div');
+  el.className = 'drag-item';
+  el.textContent = text;
+  el.draggable = true;
+  el.dataset.text = text;
+  el.addEventListener('dragstart', () => { dragSrcItem = el; setTimeout(() => el.classList.add('dragging'), 0); });
+  el.addEventListener('dragend',   () => el.classList.remove('dragging'));
+  return el;
+}
+
+function dropItem(targetContainer) {
+  if (!dragSrcItem) return;
+  targetContainer.appendChild(dragSrcItem);
+  dragSrcItem = null;
+}
+
+function checkDragDrop() {
+  const q = questions[current];
+  if (!q.drag_answers) return;
+
+  let correct = 0, total = 0;
+
+  // Check items in each category
+  document.querySelectorAll('.drag-category').forEach(zone => {
+    const cat = zone.dataset.cat;
+    zone.querySelectorAll('.drag-item').forEach(item => {
+      const text = item.dataset.text;
+      const expected = q.drag_answers[text];
+      const isOk = expected === cat;
+      item.classList.add(isOk ? 'correct-item' : 'wrong-item', 'locked');
+      item.draggable = false;
+      if (isOk) correct++;
+      total++;
+    });
+  });
+
+  // Items left in pool = wrong (not placed)
+  document.querySelectorAll('#drag-pool .drag-item').forEach(item => {
+    item.classList.add('wrong-item', 'locked');
+    item.draggable = false;
+    total++;
+  });
+
+  const allCorrect = correct === total && total === Object.keys(q.drag_answers).length;
+  const banner = document.getElementById('drag-result-banner');
+  const cls  = allCorrect ? 'all-ok' : correct > 0 ? 'partial' : 'fail';
+  const msg  = allCorrect
+    ? `Perfeito! Todas as ${total} características corretas ✓`
+    : `${correct}/${total} corretas`;
+  banner.innerHTML = `<div class="drag-result-banner ${cls}">${msg}</div>`;
+
+  document.getElementById('btn-drag-check').disabled = true;
+
+  // Record result
+  if (allCorrect) sessionCorrect++; else sessionWrong++;
+  results[current] = allCorrect;
+  updateGrid();
+  updateSidebar();
+
+  fetch('/api/study/lab-result', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: q.id, correct: allCorrect, index: current })
+  });
+  persistSession();
+
+  // Auto-advance after short delay
+  setTimeout(() => {
+    const next = findNext();
+    if (next === -1) showSummary();
+    else showQuestion(next);
+  }, 2200);
+}
 
 init();
 </script>

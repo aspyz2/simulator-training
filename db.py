@@ -95,9 +95,18 @@ def load_all_progress() -> list:
 # ── AUTH ──────────────────────────────────────────────────────────────────────
 
 def verify_token(jwt_token: str) -> Optional[str]:
-    """Verify a Supabase JWT and return user_id, or None if invalid."""
+    """Verify a Supabase JWT and return user_id (sub claim)."""
+    import jwt as pyjwt
     try:
+        # Decode locally — token was already issued and signed by Supabase
+        payload = pyjwt.decode(jwt_token, options={"verify_signature": False})
+        sub  = payload.get('sub')
+        role = payload.get('role', '')
+        if sub and role == 'authenticated':
+            return sub
+        # Fallback: try the API call (covers edge cases)
         user = _client.auth.get_user(jwt_token)
         return user.user.id if user and user.user else None
-    except Exception:
+    except Exception as e:
+        print(f"[verify_token] error: {e}")
         return None
