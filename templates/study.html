@@ -779,9 +779,9 @@ function showQuestion(idx) {
     document.getElementById('drag-badge-q').textContent = `Q${q.id}  (${idx + 1}/${questions.length})`;
     document.getElementById('drag-text').textContent = q.question;
     document.getElementById('drag-result-banner').innerHTML = '';
-    const dragImg = document.getElementById('drag-img');
-    if (q.image) { dragImg.src = `/static/images/${q.image}`; dragImg.classList.remove('hidden'); }
-    else          { dragImg.classList.add('hidden'); dragImg.src = ''; }
+    // Hide image — our HTML components are the interactive drag zones
+    document.getElementById('drag-img').classList.add('hidden');
+    document.getElementById('drag-img').src = '';
     document.getElementById('btn-drag-check').disabled = false;
     initDragDrop(q);
   } else if (isLab) {
