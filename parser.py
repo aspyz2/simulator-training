@@ -23,7 +23,6 @@ def clean_text(text):
         text = re.sub(pattern, '', text, flags=re.MULTILINE)
     text = text.replace('\ufffd', "'").replace('\u2019', "'").replace('\u2018', "'")
     text = text.replace('\u201c', '"').replace('\u201d', '"')
-    text = re.sub(r'^\s*\d+\s*$', '', text, flags=re.MULTILINE)
     text = re.sub(r'\n{3,}', '\n\n', text)
     return text.strip()
 
@@ -60,8 +59,10 @@ def parse_options(block):
     # Try inline format first: A. some text on same line
     inline = re.compile(r'^([A-E])\.\s+(.+)', re.MULTILINE)
     for m in inline.finditer(block):
-        if m.group(2).strip() and not m.group(2).strip().startswith(tuple('ABCDE')):
-            options[m.group(1)] = m.group(2).strip()
+        text = m.group(2).strip()
+        # Only skip if it looks like another option marker (e.g. "B. something")
+        if text and not re.match(r'^[A-E]\.\s', text):
+            options[m.group(1)] = text
     if options:
         return options
     # Multi-line format: letter alone on a line, text on next lines

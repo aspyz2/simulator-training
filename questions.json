@@ -61,6 +61,7 @@
         "options":  {
                         "A":  "Should a monitored port exceed the maximum administrative value for power, the port is shut",
                         "B":  "When a powered device begins drawing power from a PoE switch port, a syslog message is",
+                        "C":  "As power usage on a PoE switch port is checked, data flow to the connected device is temporarily",
                         "D":  "If a switch determines that a device is using less than the minimum configured power, it assumes"
                     },
         "answers":  [
@@ -94,6 +95,7 @@
         "id":  6,
         "question":  "What are two differences between optical-fiber cabling and copper cabling? (Choose two.)",
         "options":  {
+                        "A":  "A BNC connector is used for fiber connections",
                         "B":  "The glass core component is encased in a cladding",
                         "C":  "The data can pass through the cladding",
                         "D":  "Light is transmitted through the core of the fiber",
@@ -205,7 +207,8 @@
         "options":  {
                         "A":  "runt",
                         "B":  "collision",
-                        "C":  "late collision"
+                        "C":  "late collision",
+                        "D":  "CRC"
                     },
         "answers":  [
                         "C"
@@ -314,6 +317,7 @@
         "id":  18,
         "question":  "An engineer observes high usage on the 2.4GHz channels and lower usage on the 5GHz channels. What must be configured to allow clients to preferentially use 5GHz access points?",
         "options":  {
+                        "A":  "Client Band Select",
                         "B":  "Re-Anchor Roamed Clients",
                         "C":  "OEAP Split Tunnel",
                         "D":  "11ac MU-MIMO"
@@ -687,7 +691,8 @@
         "options":  {
                         "A":  "Physical network errors are being transmitted between the two sites.",
                         "B":  "Heavy usage is causing high latency.",
-                        "C":  "The wrong cable type was used to make the connection."
+                        "C":  "The wrong cable type was used to make the connection.",
+                        "D":  "An incorrect type of transceiver has been inserted into a device on the link."
                     },
         "answers":  [
                         "D"
@@ -877,6 +882,8 @@
         "question":  "What is a benefit for external users who consume public cloud resources?",
         "options":  {
                         "A":  "Implemented over a dedicated WAN",
+                        "B":  "All hosted on physical servers",
+                        "C":  "Accessed over the Internet",
                         "D":  "Located in the same data center as the users"
                     },
         "answers":  [
@@ -928,6 +935,7 @@
         "id":  52,
         "question":  "What is the difference between IPv6 unicast and anycast addressing?",
         "options":  {
+                        "A":  "An individual IPv6 unicast address is supported on a single interface on one node, but an IPv6",
                         "B":  "IPv6 anycast nodes must be explicitly configured to recognize the anycast address, but IPv6",
                         "C":  "IPv6 unicast nodes must be explicitly configured to recognize the unicast address, but IPv6",
                         "D":  "Unlike an IPv6 anycast address, an IPv6 unicast address is assigned to a group of interfaces on"
@@ -963,7 +971,10 @@
         "id":  54,
         "question":  "What is a benefit of using private IPv4 addressing?",
         "options":  {
-                        "A":  "Multiple companies can use the same addresses without conflicts."
+                        "A":  "Multiple companies can use the same addresses without conflicts.",
+                        "B":  "Direct connectivity is provided to internal hosts from outside an enterprise network.",
+                        "C":  "Communication to the internet is reachable without the use of NAT.",
+                        "D":  "All external hosts are provided with secure communication to the internet."
                     },
         "answers":  [
                         "A"
@@ -981,6 +992,7 @@
                         "A":  "It requires 10Gb ports on all uplinks.",
                         "B":  "It supports between 1 and 50 users.",
                         "C":  "It supports between 50 and 100 users.",
+                        "D":  "A router port connects to a broadband connection.",
                         "E":  "It requires a core, distribution, and access layer architecture."
                     },
         "answers":  [
@@ -1053,6 +1065,7 @@
         "options":  {
                         "A":  "hypervisor",
                         "B":  "OS",
+                        "C":  "CPU",
                         "D":  "physical enclosure"
                     },
         "answers":  [
@@ -1162,8 +1175,10 @@
         "id":  65,
         "question":  "Which is a reason to implement IPv4 private addressing?",
         "options":  {
+                        "A":  "Comply with PCI regulations.",
                         "B":  "Reduce the size of the forwarding table on network routers.",
-                        "C":  "Reduce the risk of a network security breach."
+                        "C":  "Reduce the risk of a network security breach.",
+                        "D":  "Comply with local law."
                     },
         "answers":  [
                         "C"
@@ -1395,6 +1410,7 @@
         "options":  {
                         "A":  "The receive buffer is full due to a broadcast storm.",
                         "B":  "Frames are discarded due to a half-duplex negotiation.",
+                        "C":  "Broadcast packets are rejected because ARP timeout is enabled.",
                         "D":  "Small frames less than 64 bytes are rejected due to size."
                     },
         "answers":  [
@@ -1835,6 +1851,7 @@
         "question":  "What does a switch use to build its MAC address table?",
         "options":  {
                         "A":  "VTP",
+                        "B":  "DTP",
                         "C":  "ingress traffic",
                         "D":  "egress traffic"
                     },
@@ -1941,6 +1958,7 @@
         "id":  110,
         "question":  "Which WLC interface provides out-of-band management in the Cisco Unified Wireless Network Architecture?",
         "options":  {
+                        "A":  "AP-Manager",
                         "B":  "service port",
                         "C":  "dynamic",
                         "D":  "virtual"
@@ -1958,6 +1976,7 @@
         "id":  111,
         "question":  "Refer to the exhibit. The network engineer is configuring a new WLAN and is told to use a setup password for authentication instead of the RADIUS servers. Which additional set of tasks must the engineer perform to complete the configuration?",
         "options":  {
+                        "A":  "Disable PMF",
                         "B":  "Select WPA Policy",
                         "C":  "Select WPA Policy",
                         "D":  "Select WPA2 Policy"
@@ -1993,10 +2012,8 @@
         "id":  113,
         "question":  "Refer to the exhibit. An engineer is configuring an EtherChannel using LACP between Switches 1 and 2. Which configuration must be applied so that only Switch 1 sends LACP initiation packets?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "B.",
+                        "C":  "D."
                     },
         "answers":  [
                         "B"
@@ -2011,10 +2028,8 @@
         "id":  114,
         "question":  "Refer to the exhibit. All VLANs are present in the VLAN database. Which command sequence must be applied to complete the configuration?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "B.",
+                        "C":  "D."
                     },
         "answers":  [
                         "A"
@@ -2083,7 +2098,9 @@
         "id":  118,
         "question":  "What is a reason to implement LAG on a Cisco WLC?",
         "options":  {
+                        "A":  "Enable connected switch ports to fail over and use different VLANs",
                         "B":  "Increase security and encrypt management frames",
+                        "C":  "Allow for stateful and link-state failover",
                         "D":  "Provide link redundancy and load balancing"
                     },
         "answers":  [
@@ -2171,6 +2188,8 @@
         "id":  123,
         "question":  "A switch is forwarding a frame out of all interfaces except the interface that received the frame. What is the technical term for this process?",
         "options":  {
+                        "A":  "ARP",
+                        "B":  "CDP",
                         "C":  "flooding",
                         "D":  "multicast"
                     },
@@ -2224,7 +2243,9 @@
         "question":  "What is a reason to configure a trunk port that connects to a WLC distribution port?",
         "options":  {
                         "A":  "Provide redundancy if there is a link failure for out-of-band management.",
-                        "C":  "Permit multiple VLANs to provide out-of-band management."
+                        "B":  "Allow multiple VLANs to be used in the data path.",
+                        "C":  "Permit multiple VLANs to provide out-of-band management.",
+                        "D":  "Eliminate redundancy with a link failure in the data path."
                     },
         "answers":  [
                         "B"
@@ -2239,6 +2260,9 @@
         "id":  127,
         "question":  "Refer to the exhibit. A network engineer configures the CCNA WLAN so that clients must reauthenticate hourly and to limit the number of simultaneous connections to the WLAN to 10. Which two actions complete this configuration? (Choose two.)",
         "options":  {
+                        "A":  "Enable the Wi-Fi Direct Clients Policy option.",
+                        "B":  "Enable the Enable Session Timeout option and set the value to 3600.",
+                        "C":  "Enable the Client Exclusion option and set the value to 3600.",
                         "D":  "Set the Maximum Allowed Clients value to 10.",
                         "E":  "Set the Maximum Allowed Clients Per AP Radio value to 10."
                     },
@@ -2313,6 +2337,7 @@
         "question":  "What occurs when PortFast is enabled on an interface that is connected to another switch?",
         "options":  {
                         "A":  "Root port choice and spanning-tree recalculation are accelerated when a switch link goes down.",
+                        "B":  "After spanning-tree converges, PortFast shuts down any port that receives BPDUs.",
                         "C":  "VTP is allowed to propagate VLAN configuration information from switch to switch automatically.",
                         "D":  "Spanning-tree fails to detect a switching loop increasing the likelihood of broadcast storms."
                     },
@@ -2377,7 +2402,7 @@
                     ],
         "explanation":  "",
         "multiple":  false,
-        "image":  "q134.png",
+        "image":  null,
         "has_exhibit":  true,
         "type":  "mcq"
     },
@@ -2395,7 +2420,7 @@
                     ],
         "explanation":  "",
         "multiple":  false,
-        "image":  "q135.png",
+        "image":  null,
         "has_exhibit":  false,
         "type":  "mcq"
     },
@@ -2410,7 +2435,7 @@
                     ],
         "explanation":  "Step 1: SW-1: interface e0/0 switchport mode trunk switchport trunk encapsulation dot1q switchport trunk allowed vlan 1,12,22 interface e0/1 switchport mode trunk switchport trunk encapsulation dot1q switchport trunk allowed vlan 1,12,22 SW-2: interface e0/0 switchport mode trunk switchport trunk encapsulation dot1q switchport trunk allowed vlan 1,12,22 interface e0/1 switchport mode trunk switchport trunk encapsulation dot1q switchport trunk allowed vlan 1,12,22 Step 2: SW-1: interface e0/2 switchport mode trunk switchport trunk encapsulation dot1q switchport trunk allowed vlan 12,22 Step 3: SW-1: interface range e0/0 - e0/1 channel-group 1 mode active SW-2: interface range e0/0 - e0/1 channel-group 1 mode active",
         "multiple":  false,
-        "image":  "q136.png",
+        "image":  null,
         "has_exhibit":  false,
         "type":  "lab"
     },
@@ -2425,7 +2450,7 @@
                     ],
         "explanation":  "Task 1: SW-1(config)# vlan 99 SW-1(config-vlan)# name FINANCIAL SW-1(config-vlan)# exit SW-2(config)# vlan 99 SW-2(config-vlan)# name FINANCIAL SW-2(config-vlan)# exit SW-3(config)# vlan 99 SW-3(config-vlan)# name FINANCIAL SW-3(config-vlan)# exit Task 2: SW-1(config)# interface e0/2 SW-1(config-if)# switchport mode access SW-1(config-if)# switchport access vlan 99 SW-1(config-if)# exit SW-2(config)# interface e0/2 SW-2(config-if)# switchport mode access SW-2(config-if)# switchport access vlan 99 SW-2(config-if)# exit SW-3(config)# interface e0/2 SW-3(config-if)# switchport mode access SW-3(config-if)# switchport access vlan 99 SW-3(config-if)# exit Task 3: SW-1(config)# cdp run Task 4: SW-1(config)# interface e0/2 SW-1(config-if)# no cdp enable",
         "multiple":  false,
-        "image":  "q137.png",
+        "image":  null,
         "has_exhibit":  false,
         "type":  "lab"
     },
@@ -2443,7 +2468,7 @@
                     ],
         "explanation":  "",
         "multiple":  false,
-        "image":  "q138.png",
+        "image":  null,
         "has_exhibit":  true,
         "type":  "mcq"
     },
@@ -2461,7 +2486,7 @@
                     ],
         "explanation":  "",
         "multiple":  false,
-        "image":  "q139.png",
+        "image":  null,
         "has_exhibit":  true,
         "type":  "mcq"
     },
@@ -2560,6 +2585,8 @@
         "question":  "How is a configuration change made to a wireless AP in lightweight mode?",
         "options":  {
                         "A":  "SSH connection to the management IP of the AP",
+                        "B":  "CAPWAP/LWAPP connection via the parent WLC",
+                        "C":  "EoIP connection via the parent WLC",
                         "D":  "HTTPS connection directly to the out-of-band address of the AP"
                     },
         "answers":  [
@@ -2673,6 +2700,7 @@
         "options":  {
                         "A":  "portfast",
                         "B":  "uplinkfast",
+                        "C":  "BPDU guard",
                         "D":  "loop guard"
                     },
         "answers":  [
@@ -2859,7 +2887,11 @@
         "id":  163,
         "question":  "A network architect planning a new Wi-Fi network must decide between autonomous, cloud- based, and split MAC architectures. Which two facts should the architect consider? (Choose two.)",
         "options":  {
-                        "D":  "Lightweight access points are solely used by split MAC architectures."
+                        "A":  "Cloud-based architectures uniquely use the CAPWAP protocol to communicate between access",
+                        "B":  "Autonomous architectures exclusively use tunneling protocols to manage access points remotely.",
+                        "C":  "All three architectures use access points to manage the wireless devices connected to the wired",
+                        "D":  "Lightweight access points are solely used by split MAC architectures.",
+                        "E":  "Each of the three architectures must use WLCs to manage their access points."
                     },
         "answers":  [
                         "C",
@@ -3015,7 +3047,8 @@
         "options":  {
                         "A":  "Local",
                         "B":  "Monitor",
-                        "C":  "FlexConnect"
+                        "C":  "FlexConnect",
+                        "D":  "Bridge"
                     },
         "answers":  [
                         "D"
@@ -3032,6 +3065,7 @@
         "options":  {
                         "A":  "One-Click",
                         "B":  "Hotspot",
+                        "C":  "Enhanced Bluetooth",
                         "D":  "Whole Home"
                     },
         "answers":  [
@@ -3135,6 +3169,7 @@
         "question":  "Which two conditions must be met before SSH operates normally on a Cisco IOS switch? (Choose two.)",
         "options":  {
                         "A":  "IP routing must be enabled on the switch.",
+                        "B":  "A console password must be configured on the switch.",
                         "C":  "Telnet must be disabled on the switch.",
                         "D":  "The switch must be running a k9 (crypto) IOS image.",
                         "E":  "The ip domain-name command must be configured on the switch."
@@ -3409,7 +3444,9 @@
         "question":  "What is the benefit of configuring PortFast on an interface?",
         "options":  {
                         "A":  "The frames entering the interface are marked with the higher priority and then processed faster by",
-                        "C":  "Real-time voice and video frames entering the interface are processed faster."
+                        "B":  "After the cable is connected, the interface is available faster to send and receive user data.",
+                        "C":  "Real-time voice and video frames entering the interface are processed faster.",
+                        "D":  "After the cable is connected, the interface uses the fastest speed setting available for that cable"
                     },
         "answers":  [
                         "B"
@@ -3496,6 +3533,9 @@
         "id":  200,
         "question":  "Refer to the exhibit. Users need to connect to the wireless network with IEEE 802.11r-compatible devices. The connection must be maintained as users travel between floors or to other areas in the building. What must be the configuration of the connection?",
         "options":  {
+                        "A":  "Disable AES encryption.",
+                        "B":  "Enable Fast Transition and select the FT 802.1x option.",
+                        "C":  "Enable Fast Transition and select the FT PSK option.",
                         "D":  "Select the WPA Policy option with the CCKM option."
                     },
         "answers":  [
@@ -3637,10 +3677,10 @@
         "id":  208,
         "question":  "When a 5 GHz wireless network is implemented using 20 MHz channels with no DFS, how many nonoverlapping channels are available?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "6",
+                        "B":  "9",
+                        "C":  "8",
+                        "D":  "4"
                     },
         "answers":  [
                         "A"
@@ -4013,7 +4053,8 @@
         "options":  {
                         "A":  "access",
                         "B":  "LAG",
-                        "C":  "trunk"
+                        "C":  "trunk",
+                        "D":  "EtherChannel"
                     },
         "answers":  [
                         "C"
@@ -4063,6 +4104,7 @@
         "options":  {
                         "A":  "LLDP",
                         "B":  "LACP",
+                        "C":  "Cisco vPC",
                         "D":  "802.1q trunks"
                     },
         "answers":  [
@@ -4111,10 +4153,10 @@
         "id":  235,
         "question":  "When a WPA2-PSK WLAN is configured in the Wireless LAN Controller, what is the minimum number of characters that is required for the passphrase?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "6",
+                        "B":  "8",
+                        "C":  "12",
+                        "D":  "18"
                     },
         "answers":  [
                         "B"
@@ -4265,7 +4307,9 @@
         "question":  "Which SDN plane forwards user-generated traffic?",
         "options":  {
                         "A":  "Management plane",
-                        "C":  "Policy plane"
+                        "B":  "Control plane",
+                        "C":  "Policy plane",
+                        "D":  "Data plane"
                     },
         "answers":  [
                         "D"
@@ -4780,10 +4824,10 @@
         "id":  273,
         "question":  "Refer to the exhibit. A packet sourced from 10.10.10.32 is destined for the Internet. What is the administrative distance for the destination route?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "0",
+                        "B":  "1",
+                        "C":  "2",
+                        "D":  "32"
                     },
         "answers":  [
                         "B"
@@ -5072,6 +5116,7 @@
         "question":  "What does the implementation of a first-hop redundancy protocol protect against on a network?",
         "options":  {
                         "A":  "default gateway failure",
+                        "B":  "BGP neighbor flapping",
                         "C":  "spanning-tree loops",
                         "D":  "root-bridge loss"
                     },
@@ -5232,10 +5277,10 @@
         "id":  298,
         "question":  "Refer to the exhibit. What is the metric for the route to the 192.168.10.33 host?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "84",
+                        "B":  "110",
+                        "C":  "192",
+                        "D":  "193"
                     },
         "answers":  [
                         "D"
@@ -5531,7 +5576,9 @@
         "question":  "Refer to the exhibit. Considering default routing protocol configurations were used, which routing protocol is used to learn the 10.255.2.2/32 route?",
         "options":  {
                         "A":  "OSPF",
-                        "C":  "RIP"
+                        "B":  "BGP",
+                        "C":  "RIP",
+                        "D":  "EIGRP"
                     },
         "answers":  [
                         "D"
@@ -5546,10 +5593,10 @@
         "id":  316,
         "question":  "Refer to the exhibit. What is the value of the administrative distance for the default gateway?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "110",
+                        "B":  "10",
+                        "C":  "1",
+                        "D":  "0"
                     },
         "answers":  [
                         "C"
@@ -5581,6 +5628,7 @@
         "options":  {
                         "A":  "Local",
                         "B":  "OSPF",
+                        "C":  "EIGRP",
                         "D":  "RIP"
                     },
         "answers":  [
@@ -5666,7 +5714,10 @@
         "id":  323,
         "question":  "Refer to the exhibit. What is the administrative distance for the advertised prefix that includes the host IP address 192.168.20.1?",
         "options":  {
-                        "A":  "192.168.10.2"
+                        "A":  "192.168.10.2",
+                        "B":  "24",
+                        "C":  "1",
+                        "D":  "0"
                     },
         "answers":  [
                         "C"
@@ -5726,6 +5777,8 @@
         "id":  327,
         "question":  "Refer to the exhibit. Which routing protocol has the best administrative distance?",
         "options":  {
+                        "A":  "Connected",
+                        "B":  "EIGRP",
                         "C":  "RIP",
                         "D":  "OSPF"
                     },
@@ -5829,10 +5882,10 @@
         "id":  333,
         "question":  "Refer to the exhibit. What is the metric associated with the route used to forward a packet received by the router destined for the IP address 172.20.0.222?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "100",
+                        "B":  "101",
+                        "C":  "20",
+                        "D":  "110"
                     },
         "answers":  [
                         "B"
@@ -6160,10 +6213,10 @@
         "id":  352,
         "question":  "Refer to the exhibit. What is the metric for the route learned via the External Gateway Protocol?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "5",
+                        "B":  "128",
+                        "C":  "160",
+                        "D":  "200"
                     },
         "answers":  [
                         "B"
@@ -6178,6 +6231,7 @@
         "id":  353,
         "question":  "Refer to the exhibit. Of the routes learned with dynamic routing protocols, which has the least preferred metric?",
         "options":  {
+                        "A":  "EIGRP",
                         "B":  "RIP",
                         "C":  "Local",
                         "D":  "OSPF"
@@ -6300,6 +6354,7 @@
         "id":  360,
         "question":  "Refer to the exhibit. The show ip ospf interface command has been executed on R1. How is OSPF configured?",
         "options":  {
+                        "A":  "A point-to-point network type is configured.",
                         "B":  "The interface is not participating in OSPF.",
                         "C":  "The default Hello and Dead timers are in use.",
                         "D":  "There are six OSPF neighbors on this interface."
@@ -6338,6 +6393,7 @@
                         "A":  "The two routers negotiate one router as the active router and the other as the standby router.",
                         "B":  "The two routers share the same interface IP address, and default gateway traffic is load-balanced",
                         "C":  "The two routers synchronize configurations to provide consistent packet forwarding.",
+                        "D":  "Each router has a different IP address, both routers act as the default gateway on the LAN, and",
                         "E":  "The two routers share a virtual IP address that is used as the default gateway for devices on the"
                     },
         "answers":  [
@@ -6498,10 +6554,10 @@
         "id":  371,
         "question":  "Refer to the exhibit. With which metric was the route to host 172.16.0.202 learned?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "0",
+                        "B":  "110",
+                        "C":  "38443",
+                        "D":  "3184439"
                     },
         "answers":  [
                         "C"
@@ -6956,6 +7012,7 @@
         "options":  {
                         "A":  "Init",
                         "B":  "2-way",
+                        "C":  "Exchange",
                         "D":  "Full"
                     },
         "answers":  [
@@ -7503,7 +7560,8 @@
         "options":  {
                         "A":  "FTP",
                         "B":  "SMTP",
-                        "C":  "TFTP"
+                        "C":  "TFTP",
+                        "D":  "DTP"
                     },
         "answers":  [
                         "A"
@@ -7554,13 +7612,15 @@
         "id":  431,
         "question":  "A network administrator must enable DHCP services between two sites. What must be configured for the router to pass DHCPDISCOVER messages on to the server?",
         "options":  {
+                        "A":  "DHCP Binding",
                         "B":  "a DHCP Relay Agent",
+                        "C":  "DHCP Snooping",
                         "D":  "a DHCP Pool"
                     },
         "answers":  [
                         "B"
                     ],
-        "explanation":  "A DHCP relay agent is any host that forwards DHCP packets between clients and servers. Relay agents are used to forward requests and replies between clients and servers when they are not on the same physical subnet. Relay agent forwarding is distinct from the normal forwarding of an IP router, where IP datagrams are switched between networks somewhat transparently. By contrast, relay agents receive DHCP messages and then generate a new DHCP message to send out on another interface. The relay agent sets the gateway address (giaddr field of the DHCP packet) and, if configured, adds the relay agent information option (option82) in the packet and forwards it to the DHCP server. The reply from the server is forwarded back to the client after removing option",
+        "explanation":  "A DHCP relay agent is any host that forwards DHCP packets between clients and servers. Relay agents are used to forward requests and replies between clients and servers when they are not on the same physical subnet. Relay agent forwarding is distinct from the normal forwarding of an IP router, where IP datagrams are switched between networks somewhat transparently. By contrast, relay agents receive DHCP messages and then generate a new DHCP message to send out on another interface. The relay agent sets the gateway address (giaddr field of the DHCP packet) and, if configured, adds the relay agent information option (option82) in the packet and forwards it to the DHCP server. The reply from the server is forwarded back to the client after removing option 82",
         "multiple":  false,
         "image":  "q431.png",
         "has_exhibit":  false,
@@ -7715,7 +7775,9 @@
         "question":  "Refer to the exhibit. How should the configuration be updated to allow PC1 and PC2 access to the Internet?",
         "options":  {
                         "A":  "Modify the configured number of the second access list",
-                        "C":  "Remove the overload keyword from the ip nat inside source command"
+                        "B":  "Change the ip nat inside source command to use interface GigabitEthernet0/0",
+                        "C":  "Remove the overload keyword from the ip nat inside source command",
+                        "D":  "Add either the ip nat {inside|outside} command under both interfaces"
                     },
         "answers":  [
                         "D"
@@ -7748,7 +7810,10 @@
         "id":  442,
         "question":  "Refer to the exhibit. A newly configured PC fails to connect to the internet by using TCP port 80 to www.cisco.com. Which setting must be modified for the connection to work?",
         "options":  {
-                        "A":  "Subnet Mask"
+                        "A":  "Subnet Mask",
+                        "B":  "DNS Servers",
+                        "C":  "Default Gateway",
+                        "D":  "DHCP Servers"
                     },
         "answers":  [
                         "B"
@@ -7820,7 +7885,8 @@
                         "A":  "IP",
                         "B":  "RTP",
                         "C":  "TCP",
-                        "D":  "UDP"
+                        "D":  "UDP",
+                        "E":  "ARP"
                     },
         "answers":  [
                         "C",
@@ -8077,7 +8143,8 @@
         "options":  {
                         "A":  "MX record",
                         "B":  "TXT record",
-                        "C":  "SRV record"
+                        "C":  "SRV record",
+                        "D":  "A record"
                     },
         "answers":  [
                         "A"
@@ -8092,10 +8159,10 @@
         "id":  461,
         "question":  "What is the total number of users permitted to simultaneously browse the controller management pages when using the AireOS GUI?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "2",
+                        "B":  "5",
+                        "C":  "8",
+                        "D":  "9"
                     },
         "answers":  [
                         "B"
@@ -8128,7 +8195,10 @@
         "id":  463,
         "question":  "Which type of DNS record is used to map a host name to an IPv4 address?",
         "options":  {
-                        "A":  "MX record"
+                        "A":  "MX record",
+                        "B":  "CNAME record",
+                        "C":  "AAAA record",
+                        "D":  "A record"
                     },
         "answers":  [
                         "D"
@@ -8143,6 +8213,7 @@
         "id":  464,
         "question":  "What is the function of a DNS zone transfer?",
         "options":  {
+                        "A":  "Copy DNS database files from a primary to secondary server.",
                         "B":  "Transfer domain registration from one registrar to another.",
                         "C":  "Modify DNS resource records for load balancing.",
                         "D":  "Redirect traffic from one domain to another."
@@ -8247,7 +8318,10 @@
         "id":  470,
         "question":  "What is a valid IPv6 address record in DNS?",
         "options":  {
-                        "A":  "MX"
+                        "A":  "MX",
+                        "B":  "AAAA",
+                        "C":  "CNAME",
+                        "D":  "A"
                     },
         "answers":  [
                         "B"
@@ -8316,6 +8390,9 @@
         "id":  474,
         "question":  "Refer to the exhibit. Users on existing VLAN 100 can reach sites on the Internet. Which action must the administrator take to establish connectivity to the Internet for users in VLAN 200?",
         "options":  {
+                        "A":  "Define a NAT pool on the router.",
+                        "B":  "Configure the ip nat outside command on another interface for VLAN 200.",
+                        "C":  "Configure static NAT translations for VLAN 200.",
                         "D":  "Update the NAT_INSIDE_RANGES ACL."
                     },
         "answers":  [
@@ -8351,7 +8428,8 @@
         "options":  {
                         "A":  "distribution",
                         "B":  "service",
-                        "C":  "virtual"
+                        "C":  "virtual",
+                        "D":  "AP-manager"
                     },
         "answers":  [
                         "C"
@@ -8384,6 +8462,7 @@
         "id":  478,
         "question":  "Which IP address is used when an administrator must open a web-based management session with a lightweight AP?",
         "options":  {
+                        "A":  "ACS IP",
                         "B":  "autonomous AP IP",
                         "C":  "WLC IP",
                         "D":  "gateway IP"
@@ -8477,6 +8556,7 @@
         "options":  {
                         "A":  "Use an access list to filter out the syslog messages.",
                         "B":  "Turn off the logging monitor in global configuration mode.",
+                        "C":  "Disable logging to the console.",
                         "D":  "Set the logging trap severity level to informational."
                     },
         "answers":  [
@@ -8798,6 +8878,7 @@
         "question":  "What facilitates a Telnet connection between devices by entering the device name?",
         "options":  {
                         "A":  "SNMP",
+                        "B":  "DNS lookup",
                         "C":  "syslog",
                         "D":  "NTP"
                     },
@@ -8814,10 +8895,10 @@
         "id":  503,
         "question":  "When deploying syslog, which severity level logs informational messages?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "0",
+                        "B":  "2",
+                        "C":  "4",
+                        "D":  "6"
                     },
         "answers":  [
                         "D"
@@ -8832,7 +8913,9 @@
         "id":  504,
         "question":  "Which two QoS tools provide congestion management? (Choose two.)",
         "options":  {
+                        "A":  "CBWFQ",
                         "B":  "FRTS",
+                        "C":  "CAR",
                         "D":  "PBR",
                         "E":  "PQ"
                     },
@@ -9033,7 +9116,9 @@
         "question":  "Which cipher is supported for wireless encryption only with the WPA2 standard?",
         "options":  {
                         "A":  "RC4",
-                        "C":  "SHA"
+                        "B":  "AES",
+                        "C":  "SHA",
+                        "D":  "AES256"
                     },
         "answers":  [
                         "B"
@@ -9067,7 +9152,9 @@
         "question":  "Which WPA mode uses PSK authentication?",
         "options":  {
                         "A":  "Local",
-                        "B":  "Personal"
+                        "B":  "Personal",
+                        "C":  "Enterprise",
+                        "D":  "Client"
                     },
         "answers":  [
                         "B"
@@ -9173,6 +9260,7 @@
         "question":  "Refer to the exhibit. What is the effect of this configuration?",
         "options":  {
                         "A":  "The switch port remains administratively down until the interface is connected to another switch.",
+                        "B":  "Dynamic ARP Inspection is disabled because the ARP ACL is missing.",
                         "C":  "The switch port interface trust state becomes untrusted.",
                         "D":  "The switch port remains down until it is configured to trust or untrust incoming packets."
                     },
@@ -9208,6 +9296,7 @@
         "question":  "When configuring a WLAN with WPA2 PSK in the Cisco Wireless LAN Controller GUI, which two formats are available to select? (Choose two.)",
         "options":  {
                         "A":  "decimal",
+                        "B":  "ASCII",
                         "C":  "hexadecimal",
                         "D":  "binary",
                         "E":  "base64"
@@ -9261,7 +9350,9 @@
         "id":  528,
         "question":  "Which selections must be used on the WLC when implementing a RADIUS server for wireless authentication?",
         "options":  {
+                        "A":  "Client Exclusion and SSH",
                         "B":  "Network Access Control State and SSH",
+                        "C":  "AAA Override and the IP address of the server",
                         "D":  "802.1x and the MAC address of the server"
                     },
         "answers":  [
@@ -9519,6 +9610,7 @@
         "options":  {
                         "A":  "next-generation firewall to keep stateful packet inspection",
                         "B":  "multifactor authentication using two separate authentication sources",
+                        "C":  "ACL to restrict incoming Telnet sessions \"admin\" accounts",
                         "D":  "IPS with a block list of known attack vectors"
                     },
         "answers":  [
@@ -9730,7 +9822,8 @@
         "options":  {
                         "A":  "There is Galois cache algorithm configured that provides strong encryption and authentication.",
                         "B":  "There is a strong mutual authentication used between NAC and the network devices using x.509",
-                        "C":  "There is an extra layer of security that ensures only authorized devices with known MAC"
+                        "C":  "There is an extra layer of security that ensures only authorized devices with known MAC",
+                        "D":  "All data frames exchanged between the client and the access point are encrypted."
                     },
         "answers":  [
                         "C"
@@ -9778,6 +9871,8 @@
         "id":  557,
         "question":  "Refer to the exhibit. An extended ACL has been configured and applied to router R2. The configuration failed to work as intended. Which two changes stop outbound traffic on TCP ports 25 and 80 to 10.0.20.0/26 from the 10.0.10.0/26 subnet while still allowing all other traffic? (Choose two.)",
         "options":  {
+                        "A":  "Add a \"permit ip any any? statement at the end of ACL 101 for allowed traffic.",
+                        "B":  "Add a \"permit ip any any? statement to the beginning of ACL 101 for allowed traffic.",
                         "C":  "The ACL must be moved to the Gi0/1 interface outbound on R2.",
                         "D":  "The source and destination IPs must be swapped in ACL 101.",
                         "E":  "The ACL must be configured the Gi0/2 interface inbound on R1."
@@ -9811,10 +9906,8 @@
         "id":  559,
         "question":  "Refer to the exhibit. Which configuration for RTR-1 denies SSH access from PC-1 to any RTR-1 interface and allows all other traffic?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "B.",
+                        "C":  "D."
                     },
         "answers":  [
                         "B"
@@ -9847,7 +9940,9 @@
         "id":  561,
         "question":  "What must be added to a Cisco 9800 WLC to ensure that secure (HTTPS) web authentication takes place?",
         "options":  {
+                        "A":  "CSR",
                         "B":  "signed certificate",
+                        "C":  "CA certificate",
                         "D":  "system certificate"
                     },
         "answers":  [
@@ -9864,7 +9959,10 @@
         "question":  "While examining excessive traffic on the network, it is noted that all incoming packets on an interface appear to be allowed even though an IPv4 ACL is applied to the interface. Which two misconfigurations cause this behavior? (Choose two.)",
         "options":  {
                         "A":  "The ACL is empty",
-                        "C":  "The packets fail to match any permit statement"
+                        "B":  "A matching permit statement is too broadly defined",
+                        "C":  "The packets fail to match any permit statement",
+                        "D":  "A matching deny statement is too high in the access list",
+                        "E":  "A matching permit statement is too high in the access list"
                     },
         "answers":  [
                         "B",
@@ -9880,6 +9978,7 @@
         "id":  563,
         "question":  "Refer to the exhibit. If the network environment is operating normally, which type of device must be connected to interface fastethernet 0/1?",
         "options":  {
+                        "A":  "DHCP client",
                         "B":  "access point",
                         "C":  "router",
                         "D":  "PC"
@@ -9897,7 +9996,10 @@
         "id":  564,
         "question":  "Refer to the exhibit. What is the effect of this configuration?",
         "options":  {
-                        "A":  "The switch discards all ingress ARP traffic with invalid MAC-to-IP address bindings."
+                        "A":  "The switch discards all ingress ARP traffic with invalid MAC-to-IP address bindings.",
+                        "B":  "All ARP packets are dropped by the switch.",
+                        "C":  "Egress traffic is passed only if the destination is a DHCP server.",
+                        "D":  "All ingress and egress traffic is dropped because the interface is untrusted."
                     },
         "answers":  [
                         "A"
@@ -9930,10 +10032,8 @@
         "id":  566,
         "question":  "Refer to the exhibit. A network engineer must block access for all computers on VLAN 20 to the web server via HTTP. All other computers must be able to access the web server. Which configuration when applied to switch A accomplishes the task?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "B.",
+                        "C":  "D."
                     },
         "answers":  [
                         "D"
@@ -10006,7 +10106,8 @@
         "options":  {
                         "A":  "TCP port 443 and UDP 21 are used.",
                         "B":  "The tunnel uses the IPsec protocol for encapsulation.",
-                        "C":  "The tunnel uses the EoIP protocol to transmit data traffic."
+                        "C":  "The tunnel uses the EoIP protocol to transmit data traffic.",
+                        "D":  "Control and data traffic encryption are enabled."
                     },
         "answers":  [
                         "D"
@@ -10039,7 +10140,10 @@
         "id":  572,
         "question":  "Refer to the exhibit. Users will be using a preconfigured secret key and SSID and must have a secured key hashing algorithm configured. The AAA server must not be used for the user authentication method. Which action completes the task?",
         "options":  {
-                        "B":  "Set CCMP128(AES)."
+                        "A":  "Enable AutoConfig iPSK.",
+                        "B":  "Set CCMP128(AES).",
+                        "C":  "Configure PSK Format HEX with key string.",
+                        "D":  "Configure PSK-SHA2."
                     },
         "answers":  [
                         "D"
@@ -10054,6 +10158,7 @@
         "id":  573,
         "question":  "Refer to the exhibit. A guest WLAN must be created that prompts the client for a username and password on the local web page of the WLC. Which two actions must be performed on the Layer 2 tab before enabling the Authentication option on the Layer 3 tab? (Choose two.)",
         "options":  {
+                        "A":  "Change the WPA Encryption option from TKIP to CCMP128(AES).",
                         "B":  "Set the Security Type option to Personal.",
                         "C":  "Uncheck the WPA Policy option check box, and check the WPA2 Policy option check box.",
                         "D":  "Set the Layer 2 Security option to None.",
@@ -10093,6 +10198,7 @@
         "options":  {
                         "A":  "single sign-on",
                         "B":  "LDAP",
+                        "C":  "Active Directory",
                         "D":  "local",
                         "E":  "RADIUS"
                     },
@@ -10128,6 +10234,7 @@
         "id":  577,
         "question":  "Which two security elements support password-less authentication methods in enterprise networks? (Choose two.)",
         "options":  {
+                        "A":  "Active Directory authentication",
                         "B":  "90-day renewal policies",
                         "C":  "complexity requirements",
                         "D":  "push notifications",
@@ -10299,6 +10406,7 @@
         "options":  {
                         "A":  "Opportunistic Wireless Encryption",
                         "B":  "Protected Management Frame",
+                        "C":  "Enhanced Open",
                         "D":  "Fast Transition"
                     },
         "answers":  [
@@ -10350,10 +10458,10 @@
         "id":  590,
         "question":  "When a WPA2-PSK WLAN is configured in the Wireless LAN Controller, what is the minimum number of characters that is required in ASCII format?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "6",
+                        "B":  "8",
+                        "C":  "12",
+                        "D":  "18"
                     },
         "answers":  [
                         "B"
@@ -10422,7 +10530,9 @@
         "id":  594,
         "question":  "Refer to the exhibit. The access list denies Telnet access from PC-1 to RTR-1 and should allow it from all other hosts. PC-2 gets \"% Connection refused by remote host\" then trying to Telnet. Without permitting Telnet from PC-1, what must be done to allow the traffic?",
         "options":  {
+                        "A":  "Add the access-list 10 permit any command to the configuration.",
                         "B":  "Remove the access-class 10 in command from line vty 0 4",
+                        "C":  "Add the ip access-group 10 out command to interface g0/0.",
                         "D":  "Remove the password command from line vty 0 4."
                     },
         "answers":  [
@@ -10457,6 +10567,7 @@
         "question":  "Refer to the exhibit. Clients on the WLAN are required to use 802.11r. What action must be taken to meet the requirement?",
         "options":  {
                         "A":  "Under Protected Management Frames, set the PMF option to Required.",
+                        "B":  "Enable CCKM under Authentication Key Management.",
                         "C":  "Set the Fast Transition option and the WPA gtk-randomize State to disable.",
                         "D":  "Set the Fast Transition option to Enable and enable FT 802.1X under Authentication Key"
                     },
@@ -10761,6 +10872,7 @@
         "id":  613,
         "question":  "Which security protocol is appropriate for a WPA3 implementation?",
         "options":  {
+                        "A":  "CCMP",
                         "B":  "MD5",
                         "C":  "TKIP",
                         "D":  "GCMP"
@@ -11095,6 +11207,7 @@
         "id":  632,
         "question":  "Refer to the exhibit. Which type of JSON data is shown?",
         "options":  {
+                        "A":  "Boolean",
                         "B":  "string",
                         "C":  "object",
                         "D":  "sequence"
@@ -11112,7 +11225,11 @@
         "id":  633,
         "question":  "Which two characteristics are representative of virtual machines (VMs)? (Choose two.)",
         "options":  {
-                        "A":  "multiple VMs operate on the same underlying hardware"
+                        "A":  "multiple VMs operate on the same underlying hardware",
+                        "B":  "Each VMs operating system depends on its hypervisor",
+                        "C":  "A VM on a hypervisor is automatically interconnected to other VMs",
+                        "D":  "A VM on an individual hypervisor shares resources equally",
+                        "E":  "Each VM runs independently of any other VM in the same hypervisor"
                     },
         "answers":  [
                         "A",
@@ -11182,6 +11299,8 @@
         "id":  637,
         "question":  "What is a reason why an administrator would choose to implement an automated network management approach?",
         "options":  {
+                        "A":  "Enable \"box by box\" configuration and deployment.",
+                        "B":  "Decipher simple password policies.",
                         "C":  "Reduce inconsistencies in the network configuration.",
                         "D":  "Increase recurrent management costs."
                     },
@@ -11216,8 +11335,10 @@
         "id":  639,
         "question":  "What is the difference between controller-based networks and traditional networks as they relate to control-plane and/or data-plane functions?",
         "options":  {
+                        "A":  "Controller-based networks centralize all important data-plane functions, and traditional networks",
                         "B":  "Traditional networks centralize all important control-plane functions, and controller-based networks",
-                        "C":  "Traditional networks centralize all important data-plane functions, and controller-based networks"
+                        "C":  "Traditional networks centralize all important data-plane functions, and controller-based networks",
+                        "D":  "Controller-based networks centralize all important control-plane functions, and traditional networks"
                     },
         "answers":  [
                         "D"
@@ -11377,7 +11498,9 @@
         "question":  "What is the central role of a hypervisor in a virtualized environment?",
         "options":  {
                         "A":  "Support many applications to run on a shared guest operating system.",
-                        "B":  "Present virtualized hardware to a guest operating system."
+                        "B":  "Present virtualized hardware to a guest operating system.",
+                        "C":  "Allow a single guest operating system to run on the physical server.",
+                        "D":  "Create a single library environment for many operating systems."
                     },
         "answers":  [
                         "B"
@@ -11501,6 +11624,8 @@
         "question":  "How do traditional campus device management and Cisco DNA Center device management differ in regards to deployment?",
         "options":  {
                         "A":  "Traditional campus device management allows a network to scale quicker than using Cisco DNA",
+                        "B":  "Cisco DNA Center device management deploys a network faster than traditional campus device",
+                        "C":  "Cisco DNA Center device management is implemented at a lower cost than most traditional",
                         "D":  "Traditional campus device management schemes typically deploy patches and updates quicker"
                     },
         "answers":  [
@@ -11575,7 +11700,8 @@
                         "A":  "SGML",
                         "B":  "YAML",
                         "C":  "XML",
-                        "D":  "JSON"
+                        "D":  "JSON",
+                        "E":  "EBCDIC"
                     },
         "answers":  [
                         "C",
@@ -11593,7 +11719,8 @@
         "options":  {
                         "A":  "access tokens",
                         "B":  "client certificates.",
-                        "C":  "session cookies"
+                        "C":  "session cookies",
+                        "D":  "API keys"
                     },
         "answers":  [
                         "D"
@@ -11732,8 +11859,10 @@
         "id":  668,
         "question":  "Which configuration management mechanism uses TCP port 22 by default when communicating with managed nodes?",
         "options":  {
+                        "A":  "Ansible",
                         "B":  "Python",
-                        "C":  "Puppet"
+                        "C":  "Puppet",
+                        "D":  "Chef"
                     },
         "answers":  [
                         "A"
@@ -11891,6 +12020,7 @@
         "id":  677,
         "question":  "What differentiates device management enabled by Cisco DNA Center from traditional campus device management?",
         "options":  {
+                        "A":  "CLI-oriented device",
                         "B":  "centralized",
                         "C":  "device-by-device hands-on",
                         "D":  "per-device"
@@ -12071,6 +12201,7 @@
         "id":  687,
         "question":  "Refer to the exhibit. Which type of JSON data is shown?",
         "options":  {
+                        "A":  "Boolean",
                         "B":  "string",
                         "C":  "object",
                         "D":  "array"
@@ -12179,6 +12310,7 @@
         "question":  "What is a function of a southbound API?",
         "options":  {
                         "A":  "Use orchestration to provision a virtual server configuration from a web server",
+                        "B":  "Automate configuration changes between a server and a switching fabric",
                         "C":  "Manage flow control between an SDN controller and a switching fabric",
                         "D":  "Facilitate the information exchange between an SDN controller and application"
                     },
@@ -12249,6 +12381,9 @@
         "id":  697,
         "question":  "What is an expected outcome when network management automation is deployed?",
         "options":  {
+                        "A":  "A distributed management plane must be used.",
+                        "B":  "Complexity increases when new device configurations are added.",
+                        "C":  "Custom applications are needed to configure network devices.",
                         "D":  "Software upgrades are performed from a central controller."
                     },
         "answers":  [
@@ -12283,6 +12418,7 @@
         "question":  "Which two HTTP verbs does a REST-based API call to create a resource? (Choose two.)",
         "options":  {
                         "A":  "GET",
+                        "B":  "DELETE",
                         "C":  "POST",
                         "D":  "PUT",
                         "E":  "PATCH"
@@ -12339,7 +12475,8 @@
         "options":  {
                         "A":  "It creates a unified control point making security policies consistent across all devices.",
                         "B":  "It exposes an API to configure locally per device for security policies.",
-                        "C":  "Security is managed near the perimeter of the network with firewalls, VPNs, and IPS."
+                        "C":  "Security is managed near the perimeter of the network with firewalls, VPNs, and IPS.",
+                        "D":  "Devices communicate with each other to establish a security policy."
                     },
         "answers":  [
                         "A"
@@ -12405,10 +12542,10 @@
         "id":  706,
         "question":  "Which HTTP status code is returned after a successful REST API request?",
         "options":  {
-                        "A":  "[See image]",
-                        "B":  "[See image]",
-                        "C":  "[See image]",
-                        "D":  "[See image]"
+                        "A":  "200",
+                        "B":  "301",
+                        "C":  "404",
+                        "D":  "500"
                     },
         "answers":  [
                         "A"
