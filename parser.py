@@ -54,18 +54,11 @@ def extract_page_image(page, q_num, img_index=0):
 
 
 def parse_options(block):
-    """Parse answer options. Handles inline text (A. text) and image-only options (A. with no text)."""
-    options = {}
-    # Try inline format first: A. some text on same line
-    inline = re.compile(r'^([A-E])\.\s+(.+)', re.MULTILINE)
-    for m in inline.finditer(block):
-        text = m.group(2).strip()
-        # Only skip if it looks like another option marker (e.g. "B. something")
-        if text and not re.match(r'^[A-E]\.\s', text):
-            options[m.group(1)] = text
+    """Parse answer options. Handles inline (A. text), multi-line blocks, and image-only options."""
+    options = _parse_options_multiline(block)
     if options:
         return options
-    # Multi-line format: letter alone on a line, text on next lines
+    # Letter-alone format: A.\n[text block]\nB.\n...
     multiline = re.compile(r'^([A-E])\.\s*\n(.*?)(?=^[A-E]\.\s*[\n$]|Answer:|$)', re.MULTILINE | re.DOTALL)
     for m in multiline.finditer(block):
         letter = m.group(1)
@@ -77,6 +70,40 @@ def parse_options(block):
     letters = re.findall(r'^([A-E])\.\s*$', block, re.MULTILINE)
     for letter in letters:
         options[letter] = '[See image]'
+    return options
+
+
+def _parse_options_multiline(block):
+    """
+    Split block at each option marker and capture all continuation lines.
+    Handles both single-line and multi-line options (e.g. Cisco CLI config blocks).
+    Falls back gracefully when options section can't be isolated.
+    """
+    options = {}
+    answer_m = re.search(r'\nAnswer:', block)
+    opts_end = answer_m.start() if answer_m else len(block)
+    opts_region = block[:opts_end]
+
+    first_opt = re.search(r'^[A-E]\.\s', opts_region, re.MULTILINE)
+    if not first_opt:
+        return options
+
+    opts_only = opts_region[first_opt.start():]
+    # Split at lines that START a new option (A. B. C. D. E.)
+    chunks = re.split(r'\n(?=[A-E]\.\s)', opts_only)
+    for chunk in chunks:
+        chunk = chunk.strip()
+        if not chunk:
+            continue
+        m = re.match(r'^([A-E])\.\s*([\s\S]*)', chunk)
+        if not m:
+            continue
+        letter = m.group(1)
+        text = re.sub(r'\s+', ' ', m.group(2)).strip()
+        if text and not re.match(r'^[A-E]\.\s', text):
+            options[letter] = text
+        elif not text:
+            options[letter] = '[See image]'
     return options
 
 

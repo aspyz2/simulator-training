@@ -739,10 +739,10 @@
     "id": 40,
     "question": "Refer to the exhibit. The router has been configured with a super net to accommodate the requirements for 380 users on a Subnet. The requirement already considers 30% future growth. Which configuration verifies the IP subnet on router R4?",
     "options": {
-      "A": "Subnet: 10.7.54.0",
-      "B": "Subnet: 10.7.54.0",
-      "C": "Subnet: 10.7.54.0",
-      "D": "Subnet: 10.7.54.0"
+      "A": "Subnet: 10.7.54.0 Subnet mask: 255.255.128.0 Broadcast address: 10.7.55.255 Usable IP address range: 10.7.54.1 – 10.7.55.254",
+      "B": "Subnet: 10.7.54.0 Subnet mask: 255.255.255.0 Broadcast address: 10.7.54.255 Usable IP address range: 10.7.54.1 – 10.7.55.254",
+      "C": "Subnet: 10.7.54.0 Subnet mask: 255.255.254.0 Broadcast address: 10.7.54.255 Usable IP address range: 10.7.54.1 – 10.7.55.254",
+      "D": "Subnet: 10.7.54.0 Subnet mask: 255.255.254.0 Broadcast address: 10.7.55.255 Usable IP address range: 10.7.54.1 – 10.7.55.254"
     },
     "answers": [
       "D"
@@ -2597,10 +2597,10 @@
     "id": 138,
     "question": "Refer to the exhibit. Network services must be enabled on interface Gi1/0/34. Which configuration meets the needs for this implementation?",
     "options": {
-      "A": "interface Gi1/0/34",
-      "B": "interface Gi1/0/34",
-      "C": "interface Gi1/0/34",
-      "D": "interface Gi1/0/34"
+      "A": "interface Gi1/0/34 switchport mode trunk switchport trunk allowed native vlan 400 switchport voice vlan 4041",
+      "B": "interface Gi1/0/34 switchport mode trunk switchport trunk allowed vlan 400, 4041 switchport voice vlan 4041",
+      "C": "interface Gi1/0/34 switchport mode access switchport access vlan 400 switchport voice vlan 4041",
+      "D": "interface Gi1/0/34 switchport mode access switchport access vlan 4041 switchport voice vlan 400"
     },
     "answers": [
       "C"
@@ -3507,10 +3507,10 @@
     "id": 193,
     "question": "Refer to the exhibit. An engineer must configure GigabitEthernet1/1 to accommodate voice and data traffic. Which configuration accomplishes this task?",
     "options": {
-      "A": "interface gigabitethernet1/1",
-      "B": "interface gigabitethernet1/1",
-      "C": "interface gigabitethernet1/1",
-      "D": "interface gigabitethernet1/1"
+      "A": "interface gigabitethernet1/1 switchport mode access switchport access vlan 300 switchport voice vlan 400",
+      "B": "interface gigabitethernet1/1 switchport mode trunk switchport trunk vlan 300 switchport trunk vlan 400",
+      "C": "interface gigabitethernet1/1 switchport mode access switchport voice vlan 300 switchport access vlan 400",
+      "D": "interface gigabitethernet1/1 switchport mode trunk switchport trunk vlan 300 switchport voice vlan 400"
     },
     "answers": [
       "A"
@@ -3615,10 +3615,10 @@
     "id": 199,
     "question": "Refer to the exhibit. An administrator must configure interfaces Gi1/1 and Gi1/3 on switch SW11. PC-1 and PC-2 must be placed in the Data VLAN, and Phone-1 must be placed in the Voice VLAN. Which configuration meets these requirements?",
     "options": {
-      "A": "interface gigabitethernet1/1",
-      "B": "interface gigabitethernet1/1",
-      "C": "interface gigabitethernet1/1",
-      "D": "interface gigabitethernet1/1"
+      "A": "interface gigabitethernet1/1 switchport mode access switchport access vlan 8 ! interface gigabitethernet1/3 switchport mode access switchport access vlan 8 switchport voice vlan 9",
+      "B": "interface gigabitethernet1/1 switchport mode access switchport access vlan 8 ! interface gigabitethernet1/3 switchport mode trunk switchport trunk vlan 8 switchport voice vlan 9",
+      "C": "interface gigabitethernet1/1 switchport mode access switchport access vlan 9 ! interface gigabitethernet1/3 switchport mode trunk switchport trunk vlan 8 switchport trunk vlan 9",
+      "D": "interface gigabitethernet1/1 switchport mode access switchport access vlan 8 ! interface gigabitethernet1/3 switchport mode access switchport voice vlan 8 switchport access vlan 9"
     },
     "answers": [
       "A"
@@ -4031,10 +4031,10 @@
     "id": 222,
     "question": "Refer to the exhibit. Which configuration establishes a Layer 2 LACP EtherChannel when applied to both switches?",
     "options": {
-      "A": "Interface range G1/1 – 1/3",
-      "B": "Interface range G1/1 – 1/3",
-      "C": "Interface range G1/1 – 1/3",
-      "D": "Interface range G1/1 – 1/3"
+      "A": "Interface range G1/1 – 1/3 switchport mode trunk channel-group 1 mode active no shutdown",
+      "B": "Interface range G1/1 – 1/3 switchport mode access channel-group 1 mode passive no shutdown",
+      "C": "Interface range G1/1 – 1/3 switchport mode trunk channel-group 1 mode desirable no shutdown",
+      "D": "Interface range G1/1 – 1/3 switchport mode access channel-group 1 mode on no shutdown"
     },
     "answers": [
       "A"
@@ -4208,10 +4208,10 @@
     "id": 233,
     "question": "Refer to the exhibit. For security reasons, automatic neighbor discovery must be disabled on the R5 Gi0/1 interface. These tasks must be completed: Disable all neighbor discovery methods on R5 interface Gi0/1 Permit neighbor discovery on R5 interface Gi0/2. Verify there are no dynamically learned neighbors on R5 interface Gi0/1. Display the IP address of R6's interface Gi0/2 Which configuration must be used?",
     "options": {
-      "A": "R5(config)#int Gi0/1",
-      "B": "R5(config)#int Gi0/1",
-      "C": "R5(config)#int Gi0/1",
-      "D": "R5(config)#int Gi0/1"
+      "A": "R5(config)#int Gi0/1 R5(config-if)#no cdp enable R5(config-if)#exit R5(config)#lldp run R5(config)#no cdp run R5#sh cdp neighbor detail R5#sh lldp neighbor",
+      "B": "R5(config)#int Gi0/1 R5(config-if)#no cdp enable R5(config-if)#exit R5(config)#no lldp run R5(config)#cdp run R5#sh cdp neighbor R5#sh lldp neighbor",
+      "C": "R5(config)#int Gi0/1 R5(config-if)#no cdp run R5(config-if)#exit R5(config)#lldp run R5(config)#cdp enable R5#sh cdp neighbor R5#sh lldp neighbor",
+      "D": "R5(config)#int Gi0/1 R5(config-if)#no cdp enable R5(config-if)#exit R5(config)#no lldp run R5(config)#cdp run R5#sh cdp neighbor detail R5#sh lldp neighbor"
     },
     "answers": [
       "D"
@@ -4484,10 +4484,10 @@
     "id": 249,
     "question": "Refer to the exhibit. All interfaces are configured with duplex auto and ip ospf network broadcast. Which configuration allows routers R14 and R86 to form an OSPFv2 adjacency and act as a central point for exchanging OSPF information between routers?",
     "options": {
-      "A": "R14#",
-      "B": "R14#",
-      "C": "R14#",
-      "D": "R14#"
+      "A": "R14# interface FastEthernet0/0 ip address 10.73.65.65 255.255.255.252 ip ospf priority 255 ip mtu 1500 router ospf 10 router-id 10.10.1.14 network 10.10.1.14 0.0.0.0 area 0 network 10.73.65.64 0.0.0.3 area 0 R86# interface FastEthernet0/0 ip address 10.73.65.66 255.255.255.252 ip mtu 1400 router ospf 10 router-id 10.10.1.86 network 10.10.1.86 0.0.0.0 area 0 network 10.73.65.64 0.0.0.3 area 0",
+      "B": "R14# interface Loopback0 ip ospf 10 area 0 interface FastEthernet0/0 ip address 10.73.65.65 255.255.255.252 ip ospf 10 area 0 ip mtu 1500 router ospf 10 ip ospf priority 255 router-id 10.10.1.14 R86# interface Loopback0 ip ospf 10 area 0 interface FastEthernet0/0 ip address 10.73.65.66 255.255.255.252 ip ospf 10 area 0 ip mtu 1500 router ospf 10 router-id 10.10.1.86",
+      "C": "R14# interface FastEthernet0/0 ip address 10.73.65.65 255.255.255.252 ip ospf priority 0 ip mtu 1500 router ospf 10 router-id 10.10.1.14 network 10.10.1.14 0.0.0.0 area 0 network 10.73.65.64 0.0.0.3 area 0 R86# interface FastEthernet0/0 ip address 10.73.65.66 255.255.255.252 ip mtu 1500 router ospf 10 router-id 10.10.1.86 network 10.10.1.86 0.0.0.0 area 0 network 10.73.65.64 0.0.0.3 area 0",
+      "D": "R14# interface Loopback0 ip ospf 10 area 0 interface FastEthernet0/0 ip address 10.73.65.65 255.255.255.252 ip ospf priority 255 ip ospf 10 area 0 ip mtu 1500 router ospf 10 router-id 10.10.1.14 R86# interface Loopback0 ip ospf 10 area 0 interface FastEthernet0/0 ip address 10.73.65.66 255.255.255.252 ip ospf 10 area 0 ip mtu 1500 router ospf 10 router-id 10.10.1.86"
     },
     "answers": [
       "D"
@@ -4682,10 +4682,10 @@
     "id": 260,
     "question": "Refer to the exhibit. How must OSPF be configured on the GigabitEthernet0/0 interface of the neighbor device to achieve the desired neighbor relationship?",
     "options": {
-      "A": "Router(config)#interface GigabitEthernet 0/0",
-      "B": "Router(config)#interface GigabitEthernet 0/0",
-      "C": "Router(config)#interface GigabitEthernet 0/0",
-      "D": "Router(config)#interface GigabitEthernet 0/0"
+      "A": "Router(config)#interface GigabitEthernet 0/0 Router(config-if)#ip ospf cost 5",
+      "B": "Router(config)#interface GigabitEthernet 0/0 Router(config-if)#ip ospf priority 1",
+      "C": "Router(config)#interface GigabitEthernet 0/0 Router(config-if)#ip ospf 1 area 2",
+      "D": "Router(config)#interface GigabitEthernet 0/0 Router(config-if)#ip ospf network point-to-point"
     },
     "answers": [
       "D"
@@ -4828,10 +4828,10 @@
     "id": 268,
     "question": "Refer to the exhibit. The primary route across Gi0/0 is configured on both routers. A secondary route must be configured to establish connectivity between the workstation networks. Which command set must be configured to complete this task?",
     "options": {
-      "A": "R1",
-      "B": "R1",
-      "C": "R1",
-      "D": "R1"
+      "A": "R1 ip route 172.16.2.0 255.255.255.248 172.16.0.5 110 R2 ip route 172.16.1.0 255.255.255.0 172.16.0.6 110",
+      "B": "R1 ip route 172.16.2.0 255.255.255.240 172.16.0.2 113 R2 ip route 172.16.1.0 255.255.255.0 172.16.0.1 114",
+      "C": "R1 ip route 172.16.2.0 255.255.255.224 172.16.0.6 111 R2 ip route 172.16.1.0 255.255.255.0 172.16.0.5 112",
+      "D": "R1 ip route 172.16.2.0 255.255.255.240 172.16.0.5 89 R2 ip route 172.16.1.0 255.255.255.0 172.16.0.6 89"
     },
     "answers": [
       "C"
@@ -5208,10 +5208,10 @@
     "id": 287,
     "question": "A router received three destination prefixes: 10.0.0.0/8, 10.0.0.0/16, and 10.0.0.0/24. When the show ip route command is executed, which output does it return?",
     "options": {
-      "A": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0",
-      "B": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0",
-      "C": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0",
-      "D": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0"
+      "A": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0 o E2 10.0.0.0/8 [110/5] via 192.168.1.1, 0:01:00, Ethernet0 o E2 10.0.0.0/16[110/5] via 192.168.2.1, 0:01:00, Ethernet1 o E2 10.0.0.0/24[110/5] via 192.168.3.1, 0:01:00, Ethernet2",
+      "B": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0 o E2 10.0.0.0/8 [110/5] via 192.168.1.1, 0:01:00, Ethernet0",
+      "C": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0 o E2 10.0.0.0/24[110/5] via 192.168.3.1, 0:01:00, Ethernet2",
+      "D": "Gateway of last resort is 172.16.1.1 to network 0.0.0.0 o E2 10.0.0.0/16[110/5] via 192.168.2.1, 0:01:00, Ethernet1 o E2 10.0.0.0/24[110/5] via 192.168.3.1, 0:01:00, Ethernet2"
     },
     "answers": [
       "A"
@@ -5282,10 +5282,10 @@
     "id": 291,
     "question": "Router R1 must send all traffic without a matching routing-table entry to 192.168.1.1. Which configuration accomplishes this task?",
     "options": {
-      "A": "R1#config t",
-      "B": "R1#config t",
-      "C": "R1#config t",
-      "D": "R1#config t"
+      "A": "R1#config t R1(config)#ip routing R1(config)#ip route default-route 192.168.1.1",
+      "B": "R1#config t R1(config)#ip routing R1(config)#ip route 192.168.1.1 0.0.0.0 0.0.0.0",
+      "C": "R1#config t R1(config)#ip routing R1(config)#ip route 0.0.0.0 0.0.0.0 192.168.1.1",
+      "D": "R1#config t R1(config)#ip routing R1(config)#ip default-gateway 192.168.1.1"
     },
     "answers": [
       "C"
@@ -7342,10 +7342,10 @@
     "id": 409,
     "question": "Refer to the exhibit. A network engineer is in the process of establishing IP connectivity between two sites. Routers R1 and R2 are partially configured with IP addressing. Both routers have the ability to access devices on their respective LANs. Which command set configures the IP connectivity between devices located on both LANs in each site?",
     "options": {
-      "A": "R1",
-      "B": "R1",
-      "C": "R1",
-      "D": "R1"
+      "A": "R1 ip route 192.168.1.1 255.255.255.0 GigabitEthernet0/1 R2 ip route 10.1.1.1 255.255.255.0 GigabitEthernet0/1",
+      "B": "R1 ip route 192.168.1.0 255.255.255.0 GigabitEthernet0/0 R2 ip route 10.1.1.1 255.255.255.0 GigabitEthernet0/0",
+      "C": "R1 ip route 0.0.0.0 0.0.0.0 209.165.200.225 R2 ip route 0.0.0.0 0.0.0.0 209.165.200.226",
+      "D": "R1 ip route 0.0.0.0 0.0.0.0 209.165.200.226 R2 ip route 0.0.0.0 0.0.0.0 209.165.200.225"
     },
     "answers": [
       "D"
@@ -7479,10 +7479,10 @@
     "id": 417,
     "question": "Refer to the exhibit. An engineer must configure router R2 so it is elected as the DR on the WAN subnet. Which command sequence must be configured?",
     "options": {
-      "A": "interface gigabitethernet0/0",
-      "B": "interface gigabitethernet0/0",
-      "C": "interface gigabitethernet0/0",
-      "D": "interface gigabitethernet0/0"
+      "A": "interface gigabitethernet0/0 ip address 10.0.0.34 255.255.255.248 ip ospf priority 0",
+      "B": "interface gigabitethernet0/0 ip address 10.0.0.34 255.255.255.224 ip ospf priority 100",
+      "C": "interface gigabitethernet0/0 ip address 10.0.1.1 255.255.255.0 ip ospf priority 255",
+      "D": "interface gigabitethernet0/0 ip address 10.0.1.1 255.255.255.224 ip ospf priority 98"
     },
     "answers": [
       "B"
@@ -7497,10 +7497,10 @@
     "id": 418,
     "question": "Refer to the exhibit. Which IPv6 configuration is required for R17 to successfully ping the WAN interface on R18?",
     "options": {
-      "A": "R17#",
-      "B": "R17#",
-      "C": "R17#",
-      "D": "R17#"
+      "A": "R17# ! no ip domain lookup ip cef ipv6 cef ! interface FastEthernet0/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:2::201/64 ! Interface FastEthernet1/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:3::201/64 ! no cdp log mismatch duplex ipv6 route 2001:DB8:4::/64 2001:DB8:4::302",
+      "B": "R17# ! no ip domain lookup ip cef ipv6 unicast-routing ! interface FastEthernet0/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:2::201/64 ! Interface FastEthernet1/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:3::201/64 ! no cdp log mismatch duplex ipv6 route 2001:DB8:4::/64 2001:DB8:3::301",
+      "C": "R17# ! no ip domain lookup ip cef ! interface FastEthernet0/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:3::201/64 ! Interface FastEthernet1/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:2::201/64 ! no cdp log mismatch duplex ipv6 route 2001:DB8:4::/64 2001:DB8:5::101",
+      "D": "R17# ! no ip domain lookup ip cef ipv6 unicast-routing ! interface FastEthernet0/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:2::201/64 ! Interface FastEthernet1/0 no ip address duplex auto speed auto ipv6 address 2001:DB8:3::201/64 ! no cdp log mismatch duplex ipv6 route 2001:DB8:4::/64 2001:DB8:2::201"
     },
     "answers": [
       "B"
@@ -7515,10 +7515,10 @@
     "id": 419,
     "question": "OSPF must be configured between routers R1 and R2. Which OSPF configuration must be applied to router R1 to avoid a DR/BDR election?",
     "options": {
-      "A": "router ospf 1",
-      "B": "router ospf 1",
-      "C": "router ospf 1",
-      "D": "router ospf 1"
+      "A": "router ospf 1 network 192.168.1.1 0.0.0.0 area 0 interface e1/1 ip address 192.168.1.1 255.255.255.252 ip ospf cost 0",
+      "B": "router ospf 1 network 192.168.1.1 0.0.0.0 area 0 hello interval 15 interface e1/1 ip address 192.168.1.1 255.255.255.252",
+      "C": "router ospf 1 network 192.168.1.1 0.0.0.0 area 0 interface e1/1 ip address 192.168.1.1 255.255.255.252 ip ospf network broadcast",
+      "D": "router ospf 1 network 192.168.1.1 0.0.0.0 area 0 interface e1/1 ip address 192.168.1.1 255.255.255.252 ip ospf network point-to-point"
     },
     "answers": [
       "D"
@@ -7706,10 +7706,10 @@
     "id": 430,
     "question": "An engineer is configuring switch SW1 to act as an NTP server when all upstream NTP server connectivity fails. Which configuration must be used?",
     "options": {
-      "A": "SW1# config t",
-      "B": "SW1# config t",
-      "C": "SW1# config t",
-      "D": "SW1# config t"
+      "A": "SW1# config t SW1(config)#ntp peer 192.168.1.1 SW1(config)#ntp access-group peer accesslist1",
+      "B": "SW1# config t SW1(config)#ntp master SW1(config)#ntp server192.168.1.1",
+      "C": "SW1# config t SW1(config)#ntp backup SW1(config)#ntp server192.168.1.1",
+      "D": "SW1# config t SW1(config)#ntp server192.168.1.1 SW1(config)#ntp access-group peer accesslist1"
     },
     "answers": [
       "B"
@@ -8864,10 +8864,10 @@
     "id": 495,
     "question": "An engineer is configuring NAT to translate the source subnet of 10.10.0.0/24 to any one of three addresses: 192.168.3.1, 192.168.3.2, or 192.168.3.3. Which configuration should be used?",
     "options": {
-      "A": "enable",
-      "B": "enable",
-      "C": "enable",
-      "D": "enable"
+      "A": "enable configure terminal ip nat pool mypool 192.168.3.1 192.168.3.3 prefix-length 30 access-list 1 permit 10.10.0.0 0.0.0.255 ip nat outside destination list 1 pool mypool interface g1/1 ip nat inside interface g1/2 ip nat outside",
+      "B": "enable configure terminal ip nat pool mypool 192.168.3.1 192.168.3.3 prefix-length 30 access-list 1 permit 10.10.0.0 0.0.0.254 ip nat inside source list 1 pool mypool interface g1/1 ip nat inside interface g1/2 ip nat outside",
+      "C": "enable configure terminal ip nat pool mypool 192.168.3.1 192.168.3.3 prefix-length 30 route map permit 10.10.0.0 255.255.255.0 ip nat outside destination list 1 pool mypool interface g1/1 ip nat inside interface g1/2 ip nat outside",
+      "D": "enable configure terminal ip nat pool mypool 192.168.3.1 192.168.3.3 prefix-length 30 access-list 1 permit 10.10.0.0 0.0.0.255 ip nat inside source list 1 pool mypool interface g1/1 ip nat inside interface g1/2 ip nat outside"
     },
     "answers": [
       "D"
@@ -9064,10 +9064,10 @@
     "id": 506,
     "question": "Refer to the exhibit. An engineer must translate the PC1 IP address to 10.199.77.100 and permit PC1 to ping the loopback 0 interface on router R2. Which configuration must be used?",
     "options": {
-      "A": "R1",
-      "B": "R1",
-      "C": "R1",
-      "D": "R1"
+      "A": "R1 interface FastEthernet0/0 ip nat outside ! interface FastEthernet1/0 ip nat inside ! ip nat inside source static 172.16.29.78 10.199.77.100 R2 ip route 172.16.29.78 255.255.255.255 10.139.91.1",
+      "B": "R1 interface FastEthernet0/0 ip nat outside ! interface FastEthernet1/0 ip nat inside ! ip nat inside source static 172.16.29.78 10.199.77.100 R2 ip route 10.199.77.100 255.255.255.255 10.139.91.1",
+      "C": "R1 interface FastEthernet0/0 ip nat outside ! interface FastEtheret1/0 ip nat inside ! ip nat inside source static 172.16.29.78 10.199.77.100 R2 ip route 172.15.29.78 255.255.255.255 10.139.91.1",
+      "D": "R1 interface FastEthernet0/0 ip nat inside ! interface FastEthernet1/0 ip nat outside ! ip nat inside source static 10.199.77.100 172.16.29.78 R2 ip route 10.199.77.100 255.255.255.255 10.139.91.1"
     },
     "answers": [
       "B"
@@ -9138,10 +9138,10 @@
     "id": 510,
     "question": "Refer to the exhibit. Local access for R4 must be established and these requirements must be met: Only Telnet access is allowed. The enable password must be stored securely. The enable password must be applied in plain text. Full access to R4 must be permitted upon successful login. Which configuration script meets the requirements?",
     "options": {
-      "A": "!",
-      "B": "!",
-      "C": "!",
-      "D": "!"
+      "A": "! conf t ! username test1 password testpass1 enable secret level 15 0 Test123 ! line vty 0 15 login local transport input telnet",
+      "B": "! config t ! username test1 password testpass1 enable password level 15 0 Test123 ! line vty 0 15 login local transport input all",
+      "C": "! config t ! username test1 password testpass1 enable password level 1 7 Test123 ! line vty 0 15 accounting exec default transport input all",
+      "D": "! config t ! username test1 password testpass1 enable secret level 1 0 Test123 ! line vty 0 15 login authentication password Test123 transport input telnet"
     },
     "answers": [
       "A"
@@ -9282,10 +9282,10 @@
     "id": 518,
     "question": "An engineer is configuring remote access to a router from IP subnet 10.139.58.0/28. The domain name, crypto keys, and SSH have been configured. Which configuration enables the traffic on the destination router?",
     "options": {
-      "A": "interface FastEthernet0/0",
-      "B": "interface FastEthernet0/0",
-      "C": "interface FastEthernet0/0",
-      "D": "interface FastEthernet0/0"
+      "A": "interface FastEthernet0/0 ip address 10.122.49.1 255.255.255.252 ip access-group 110 in ip access-list extended 110 permit tcp 10.139.58.0 0.0.0.15 host 10.122.49.1 eq 22",
+      "B": "interface FastEthernet0/0 ip address 10.122.49.1 255.255.255.240 access-group 120 in ip access-list extended 120 permit tcp 10.139.58.0 255.255.255.248 any eq 22",
+      "C": "interface FastEthernet0/0 ip address 10.122.49.1 255.255.255.252 ip access-group 105 in ip access-list standard 105 permit tcp 10.139.58.0 0.0.0.7 eq 22 host 10.122.49.1",
+      "D": "interface FastEthernet0/0 ip address 10.122.49.1 255.255.255.248 ip access-group 10 in ip access-list standard 10 permit udp 10.139.58.0 0.0.0.7 host 10.122.49.1 eq 22"
     },
     "answers": [
       "A"
@@ -10988,10 +10988,10 @@
     "id": 609,
     "question": "SW1 supports connectivity for a lobby conference room and must be secured. The engineer must limit the connectivity from PC1 to the SW1 and SW2 network. The MAC addresses allowed must be limited to two. Which configuration secures the conference room connectivity?",
     "options": {
-      "A": "interface gi1/0/15",
-      "B": "interface gi1/0/15",
-      "C": "interface gi1/0/15",
-      "D": "interface gi1/0/15"
+      "A": "interface gi1/0/15 switchport port-security switchport port-security maximum 2",
+      "B": "interface gi1/0/15 switchport port-security switchport port-security mac-address 0000.abcd.0004 vlan 100",
+      "C": "interface gi1/0/15 switchport port-security mac-address 0000.abcd.0004 vlan 100",
+      "D": "interface gi1/0/15 switchport port-security mac-address 0000.abcd.0004 vlan 100 interface switchport secure-mac limit 2"
     },
     "answers": [
       "A"
@@ -11152,10 +11152,10 @@
     "id": 617,
     "question": "A network engineer must configure an access list on a new Cisco IOS router. The access list must deny HTTP traffic to network 10.125.128.32/27 from the 192.168.240.0/20 network, but it must allow the 192.168.240.0/20 network to reach the rest of the 10.0.0.0/8 network. Which configuration must the engineer apply?",
     "options": {
-      "A": "ip access-list extended deny_outbound",
-      "B": "ip access-list extended deny_outbound",
-      "C": "ip access-list extended deny_outbound",
-      "D": "ip access-list extended deny_outbound"
+      "A": "ip access-list extended deny_outbound 10 permit ip 192.168.240.0 255.255.240.0 10.0.0.0 255.0.0.0 20 deny tcp 192.168.240.0 255.255.240.0 10.125.128.32 255.255.255.224 eq 443 30 permit ip any any",
+      "B": "ip access-list extended deny_outbound 10 deny tcp 192.168.240.0 0.0.15.255 10.125.128.32 0.0.0.31 eq 80 20 permit ip 192.168.240.0 0.0.15.255 10.0.0.0 0.255.255.255 30 deny ip any any log",
+      "C": "ip access-list extended deny_outbound 10 deny tcp 10.125.128.32 255.255.255.224 192.168.240.0 255.255.240.0 eq 443 20 deny tcp 192.168.240.0 255.255.240.0 10.125.128.32 255.255.255.224 eq 443 30 permit ip 192.168.240.0 255.255.240.0 10.0.0.0 255.0.0.0",
+      "D": "ip access-list extended deny_outbound 10 deny tcp 192.168.240.0 0.0.15.255 any eq 80 20 deny tcp 192.168.240.0 0.0.15.255 10.125.128.32 0.0.0.31 eq 80 30 permit ip 192.168.240.0 0.0.15.255 10.0.0.0 0.255.255.255"
     },
     "answers": [
       "B"
