@@ -132,16 +132,6 @@ def parse_questions(pdf_path, progress_callback=None):
                     pre_ans = re.split(r'\nAnswer:', block)[0]
                     task_text = re.sub(r'CORRECT TEXT\s*\n?', '', pre_ans).strip()
                     task_text = re.sub(r'Guidelines\s*\n.*?(?=Tasks|\Z)', '', task_text, flags=re.DOTALL).strip()
-                start_pg = q_start_page.get(q_id)
-                image_file = None
-                if start_pg is not None:
-                    for pg_offset in range(3):
-                        pg_idx = start_pg + pg_offset
-                        if pg_idx < len(pdf.pages) and page_has_images[pg_idx]:
-                            img_file = extract_page_image(pdf.pages[pg_idx], q_id)
-                            if img_file:
-                                image_file = img_file
-                                break
                 if task_text or expl:
                     questions.append({
                         'id': q_id,
@@ -150,7 +140,7 @@ def parse_questions(pdf_path, progress_callback=None):
                         'answers': [],
                         'explanation': expl,
                         'multiple': False,
-                        'image': image_file,
+                        'image': None,
                         'has_exhibit': False,
                         'type': 'lab',
                     })
@@ -182,11 +172,15 @@ def parse_questions(pdf_path, progress_callback=None):
             # Options
             options = parse_options(block) if not is_drag_drop else {}
 
-            # Image: check starting page and next page for images
+            # Image: only assign if question references an exhibit/topology
+            EXHIBIT_RE = re.compile(
+                r'\b(exhibit|refer to|topology shown|diagram|figure|shown below|the following)\b',
+                re.IGNORECASE,
+            )
             image_file = None
-            has_exhibit = 'exhibit' in q_text.lower() or 'refer to' in q_text.lower()
+            has_exhibit = bool(EXHIBIT_RE.search(q_text)) and not is_drag_drop
             start_pg = q_start_page.get(q_id)
-            if start_pg is not None:
+            if has_exhibit and start_pg is not None:
                 for pg_offset in range(3):
                     pg_idx = start_pg + pg_offset
                     if pg_idx < len(pdf.pages) and page_has_images[pg_idx]:
