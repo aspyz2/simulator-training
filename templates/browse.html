@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Browse Questions — CCNA</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f172a;
+    color: #e2e8f0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .topbar a {
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .topbar a:hover { color: #e2e8f0; }
+  .topbar-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: #f1f5f9;
+    flex: 1;
+  }
+  .filter-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid #475569;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn.active { background: #3b82f6; border-color: #3b82f6; color: #fff; }
+  .filter-btn:hover:not(.active) { border-color: #94a3b8; color: #e2e8f0; }
+
+  .counter { font-size: 13px; color: #64748b; white-space: nowrap; }
+
+  /* ── JUMP BOX ── */
+  .jump-wrap { display: flex; gap: 6px; align-items: center; }
+  .jump-wrap input {
+    width: 70px;
+    padding: 5px 8px;
+    background: #0f172a;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    color: #e2e8f0;
+    font-size: 13px;
+    text-align: center;
+  }
+  .jump-wrap input:focus { outline: none; border-color: #3b82f6; }
+  .btn-jump {
+    padding: 5px 12px;
+    background: #3b82f6;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .btn-jump:hover { background: #2563eb; }
+
+  /* ── MAIN LAYOUT ── */
+  .main {
+    flex: 1;
+    max-width: 820px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 16px;
+    padding: 28px;
+    animation: fadeIn 0.18s ease;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .badge-q {
+    background: #1d4ed8;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 20px;
+  }
+  .badge-type {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge-type.mcq      { background: #1e3a5f; color: #93c5fd; }
+  .badge-type.drag_drop { background: #2e1065; color: #c4b5fd; }
+  .badge-type.lab      { background: #14532d; color: #86efac; }
+  .badge-exhibit {
+    background: #1c1917;
+    color: #fbbf24;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .exhibit-img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    margin-bottom: 18px;
+    display: block;
+  }
+
+  .q-text {
+    font-size: 16px;
+    line-height: 1.65;
+    color: #cbd5e1;
+    margin-bottom: 22px;
+    white-space: pre-wrap;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1.5px solid #334155;
+    background: #0f172a;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .option.correct {
+    border-color: #16a34a;
+    background: #052e16;
+    color: #86efac;
+  }
+  .option-letter {
+    font-weight: 700;
+    min-width: 22px;
+    color: #64748b;
+    font-size: 13px;
+  }
+  .option.correct .option-letter { color: #4ade80; }
+
+  /* ── DRAG ANSWER TABLE ── */
+  .drag-answer-section { margin-bottom: 24px; }
+  .drag-answer-section h4 {
+    font-size: 13px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .drag-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .drag-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: #0f172a;
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .drag-table td {
+    padding: 9px 12px;
+    border-top: 1px solid #1e293b;
+    color: #cbd5e1;
+  }
+  .drag-table tr:nth-child(even) td { background: #0f172a33; }
+  .cat-pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background: #1e3a5f;
+    color: #93c5fd;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  /* ── EXPLANATION ── */
+  .explanation-box {
+    background: #0f172a;
+    border: 1px solid #1d4ed8;
+    border-left: 4px solid #3b82f6;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #93c5fd;
+  }
+  .explanation-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #3b82f6;
+    margin-bottom: 8px;
+  }
+
+  /* ── NAV ── */
+  .nav-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 28px;
+    gap: 12px;
+  }
+  .btn-nav {
+    padding: 10px 28px;
+    border-radius: 8px;
+    border: 1.5px solid #475569;
+    background: #1e293b;
+    color: #e2e8f0;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-weight: 600;
+  }
+  .btn-nav:hover:not(:disabled) { background: #334155; border-color: #94a3b8; }
+  .btn-nav:disabled { opacity: 0.3; cursor: default; }
+
+  .prog-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: #334155;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .prog-bar-fill {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 3px;
+    transition: width 0.25s;
+  }
+
+  /* ── LOADING / EMPTY ── */
+  .loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: #475569;
+    font-size: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="/">← Home</a>
+  <div class="topbar-title">Browse Questions</div>
+
+  <div class="filter-btns">
+    <button class="filter-btn active" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" onclick="setFilter('mcq')">MCQ</button>
+    <button class="filter-btn" onclick="setFilter('drag_drop')">Drag &amp; Drop</button>
+    <button class="filter-btn" onclick="setFilter('lab')">Lab</button>
+  </div>
+
+  <div class="jump-wrap">
+    <input type="number" id="jump-input" placeholder="Q #" min="1">
+    <button class="btn-jump" onclick="jumpToQ()">Go</button>
+  </div>
+
+  <div class="counter" id="counter">—</div>
+</div>
+
+<div class="main">
+  <div id="content" class="loading">Loading questions…</div>
+</div>
+
+<script>
+let index   = [];   // [{id, type}, ...]
+let filtered = [];  // filtered subset
+let pos     = 0;    // current position in filtered
+let activeFilter = 'all';
+
+async function init() {
+  const res = await fetch('/api/browse/index');
+  index = await res.json();
+  applyFilter('all');
+}
+
+function setFilter(f) {
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().toLowerCase().replace(' & ', '_').replace(' drop','_drop').replace('drag_','drag_') === f
+      || (f === 'all' && b.textContent.trim() === 'All')
+      || (f === 'drag_drop' && b.textContent.includes('Drag'))
+    );
+  });
+  applyFilter(f);
+}
+
+function applyFilter(f) {
+  activeFilter = f;
+  filtered = f === 'all' ? index : index.filter(q => q.type === f);
+  pos = 0;
+  if (filtered.length === 0) {
+    document.getElementById('content').innerHTML = '<div class="loading">No questions for this filter.</div>';
+    document.getElementById('counter').textContent = '0 questions';
+    return;
+  }
+  loadQuestion(0);
+}
+
+async function loadQuestion(p) {
+  pos = p;
+  const entry = filtered[pos];
+  document.getElementById('counter').textContent = `${pos + 1} / ${filtered.length}`;
+  document.getElementById('content').innerHTML = '<div class="loading">Loading…</div>';
+
+  const res = await fetch(`/api/browse/question?id=${entry.id}`);
+  const q   = await res.json();
+  renderQuestion(q);
+}
+
+function renderQuestion(q) {
+  const isLab     = q.type === 'lab';
+  const isDragDrop = q.type === 'drag_drop';
+
+  let html = `
+    <div class="card">
+      <div class="card-meta">
+        <span class="badge-q">Q${q.id}</span>
+        <span class="badge-type ${q.type}">${q.type === 'drag_drop' ? 'Drag & Drop' : q.type.toUpperCase()}</span>
+        ${q.has_exhibit ? '<span class="badge-exhibit">Has Exhibit</span>' : ''}
+      </div>`;
+
+  if (q.image && q.type !== 'drag_drop') {
+    html += `<img class="exhibit-img" src="/static/images/${q.image}" alt="Exhibit">`;
+  }
+
+  html += `<div class="q-text">${escHtml(q.question)}</div>`;
+
+  // MCQ options
+  if (!isDragDrop && !isLab && Object.keys(q.options).length > 0) {
+    html += `<div class="options">`;
+    for (const [letter, text] of Object.entries(q.options)) {
+      const isCorrect = q.answers.includes(letter);
+      html += `
+        <div class="option ${isCorrect ? 'correct' : ''}">
+          <span class="option-letter">${letter}.</span>
+          <span>${escHtml(text)}</span>
+          ${isCorrect ? '<span style="margin-left:auto;font-size:18px">✓</span>' : ''}
+        </div>`;
+    }
+    html += `</div>`;
+  }
+
+  // Drag & Drop answer table
+  if (isDragDrop && q.drag_answers && Object.keys(q.drag_answers).length > 0) {
+    html += `
+      <div class="drag-answer-section">
+        <h4>Correct Mapping</h4>
+        <table class="drag-table">
+          <thead><tr><th>Item</th><th>Category</th></tr></thead>
+          <tbody>`;
+    for (const [item, cat] of Object.entries(q.drag_answers)) {
+      html += `<tr><td>${escHtml(item)}</td><td><span class="cat-pill">${escHtml(cat)}</span></td></tr>`;
+    }
+    html += `</tbody></table></div>`;
+  }
+
+  // Explanation
+  if (q.explanation) {
+    html += `
+      <div class="explanation-box">
+        <div class="explanation-label">Explanation</div>
+        ${escHtml(q.explanation)}
+      </div>`;
+  }
+
+  // Nav
+  html += `
+      <div class="nav-row">
+        <button class="btn-nav" onclick="loadQuestion(${pos - 1})" ${pos === 0 ? 'disabled' : ''}>← Prev</button>
+        <div class="prog-bar-wrap">
+          <div class="prog-bar-fill" style="width:${((pos + 1) / filtered.length * 100).toFixed(1)}%"></div>
+        </div>
+        <button class="btn-nav" onclick="loadQuestion(${pos + 1})" ${pos >= filtered.length - 1 ? 'disabled' : ''}>Next →</button>
+      </div>
+    </div>`;
+
+  document.getElementById('content').innerHTML = html;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function jumpToQ() {
+  const val = parseInt(document.getElementById('jump-input').value, 10);
+  if (isNaN(val)) return;
+  // Find by Q id first
+  const idx = filtered.findIndex(q => q.id === val);
+  if (idx !== -1) { loadQuestion(idx); return; }
+  // Fallback: treat as position
+  const p = Math.max(0, Math.min(val - 1, filtered.length - 1));
+  loadQuestion(p);
+  document.getElementById('jump-input').value = '';
+}
+
+document.getElementById('jump-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') jumpToQ();
+});
+
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowLeft'  && pos > 0)                  loadQuestion(pos - 1);
+  if (e.key === 'ArrowRight' && pos < filtered.length - 1) loadQuestion(pos + 1);
+});
+
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/\n/g,'<br>');
+}
+
+init();
+</script>
+</body>
+</html>

@@ -141,6 +141,12 @@ def study():
     return render_template('study.html')
 
 
+@app.route('/browse')
+@login_required
+def browse():
+    return render_template('browse.html')
+
+
 @app.route('/exam')
 @login_required
 def exam():
@@ -442,6 +448,40 @@ def get_progress():
         'wrong_count':      len(wrong_ids),
         'history':          history,
         'batches':          list(reversed(progress.get('batches', []))),
+    })
+
+
+# ── BROWSE MODE API ───────────────────────────────────────────────────────────
+
+@app.route('/api/browse/index')
+def browse_index():
+    """Return lightweight index: list of {id, type} for all questions."""
+    questions = load_questions()
+    return jsonify([{'id': q['id'], 'type': q.get('type', 'mcq')} for q in questions])
+
+
+@app.route('/api/browse/question')
+def browse_question():
+    """Return a single question with full data including correct answers."""
+    q_id = request.args.get('id', type=int)
+    questions = load_questions()
+    q_map = {q['id']: q for q in questions}
+    q = q_map.get(q_id)
+    if not q:
+        return jsonify({'error': 'Not found'}), 404
+    return jsonify({
+        'id':             q['id'],
+        'type':           q.get('type', 'mcq'),
+        'question':       q['question'],
+        'options':        q['options'],
+        'answers':        q['answers'],
+        'multiple':       q['multiple'],
+        'explanation':    q.get('explanation', ''),
+        'image':          q.get('image'),
+        'has_exhibit':    q.get('has_exhibit', False),
+        'drag_items':     q.get('drag_items', []),
+        'drag_categories': q.get('drag_categories', []),
+        'drag_answers':   q.get('drag_answers', {}),
     })
 
 
