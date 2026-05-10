@@ -1,5 +1,5 @@
-"""
-fix_dup_options.py — Re-parses only the 22 questions with identical options
+﻿"""
+fix_dup_options.py â€” Re-parses only the 22 questions with identical options
 from the original PDF, applying the fixed multiline parse_options logic.
 """
 import json, re, sys, os
@@ -8,7 +8,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 import pdfplumber
 from parser import clean_text, parse_options, _parse_options_multiline
 
-PDF_PATH = r'C:\Users\caju_admin\Downloads\200-301 V3.pdf'
+PDF_PATH = r'C:\Users\eavsec\Downloads\200-301 V3.pdf'
 TARGET_IDS = {40, 138, 193, 199, 222, 233, 249, 260, 268, 287, 291,
               409, 417, 418, 419, 430, 495, 506, 510, 518, 609, 617}
 
@@ -52,7 +52,7 @@ for i in range(1, len(parts) - 1, 2):
 
     opts = parse_options(block)
     if not opts:
-        print(f'  Q{q_id}: no options found — skipping')
+        print(f'  Q{q_id}: no options found â€” skipping')
         continue
 
     vals = list(opts.values())
